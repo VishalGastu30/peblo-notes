@@ -190,6 +190,94 @@ export default function InsightsPage() {
             </div>
           </div>
         </section>
+        {/* Enhanced Insights Bottom Section */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-gutter pb-margin-desktop">
+          {/* This Week Summary */}
+          <div className="glass-card rounded-[28px] p-8 lg:col-span-1 bg-surface-container border border-primary/20">
+            <h4 className="font-title-md text-title-md text-on-surface mb-6 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary">calendar_month</span>
+              This Week
+            </h4>
+            <div className="space-y-4">
+              <p className="font-body-lg text-on-surface-variant leading-relaxed">
+                You've been heavily focused on <span className="text-primary font-medium">Product Strategy</span> and <span className="text-secondary font-medium">Design Systems</span>.
+              </p>
+              <div className="p-4 bg-surface-container-low rounded-xl border border-white/5 space-y-2">
+                <div className="flex justify-between text-body-sm">
+                  <span className="text-outline">Notes Created</span>
+                  <span className="text-on-surface font-medium">12</span>
+                </div>
+                <div className="flex justify-between text-body-sm">
+                  <span className="text-outline">AI Invocations</span>
+                  <span className="text-on-surface font-medium">34</span>
+                </div>
+                <div className="flex justify-between text-body-sm">
+                  <span className="text-outline">Reading Time</span>
+                  <span className="text-on-surface font-medium">2h 15m</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Usage Breakdown */}
+          <div className="glass-card rounded-[28px] p-8 lg:col-span-1">
+            <h4 className="font-title-md text-title-md text-on-surface mb-6 flex items-center gap-2">
+              <span className="material-symbols-outlined text-secondary">analytics</span>
+              AI Usage
+            </h4>
+            <div className="space-y-5">
+              <div>
+                <div className="flex justify-between text-body-sm mb-1">
+                  <span className="text-on-surface">Summarization</span>
+                  <span className="text-outline">45%</span>
+                </div>
+                <div className="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+                  <div className="w-[45%] h-full bg-primary rounded-full"></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-body-sm mb-1">
+                  <span className="text-on-surface">Action Item Extraction</span>
+                  <span className="text-outline">30%</span>
+                </div>
+                <div className="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+                  <div className="w-[30%] h-full bg-secondary rounded-full"></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-body-sm mb-1">
+                  <span className="text-on-surface">Semantic Search</span>
+                  <span className="text-outline">25%</span>
+                </div>
+                <div className="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+                  <div className="w-[25%] h-full bg-tertiary rounded-full"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recently Edited */}
+          <div className="glass-card rounded-[28px] p-8 lg:col-span-1">
+            <h4 className="font-title-md text-title-md text-on-surface mb-6 flex items-center gap-2">
+              <span className="material-symbols-outlined text-outline">history</span>
+              Recently Edited
+            </h4>
+            <div className="space-y-4">
+              <div className="group cursor-pointer">
+                <h5 className="font-body-lg text-on-surface group-hover:text-primary transition-colors">Q4 Roadmap</h5>
+                <p className="text-body-sm text-outline">Updated 2h ago</p>
+              </div>
+              <div className="group cursor-pointer">
+                <h5 className="font-body-lg text-on-surface group-hover:text-primary transition-colors">Brand Guidelines</h5>
+                <p className="text-body-sm text-outline">Updated yesterday</p>
+              </div>
+              <div className="group cursor-pointer">
+                <h5 className="font-body-lg text-on-surface group-hover:text-primary transition-colors">User Research Synthesis</h5>
+                <p className="text-body-sm text-outline">Updated 3 days ago</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
       <Footer />
     </div>
