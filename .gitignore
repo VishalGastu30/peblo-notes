@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+ui-ux-pro-max-skill/
+stitch_peblo_notes_premium_workspace/
+ui-ux-pro-max-skill/
+design-system/
