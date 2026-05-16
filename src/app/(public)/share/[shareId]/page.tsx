@@ -1,6 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { PenTool, Palette, CheckCircle2, Share2, Globe, User } from 'lucide-react';
 
 export default function SharePage() {
   return (
@@ -27,7 +28,9 @@ export default function SharePage() {
             {/* Header Section */}
             <header className="space-y-6">
               <div className="flex items-center gap-4">
-                <img alt="Author Avatar" className="w-12 h-12 rounded-full border border-primary/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyVL_OePV2IC0MD5jC4Q0wD4cPtLq5QoXnu_W6ITSC6z2fl2Ii3Z6ZF6LUbxJKuHIu37a_JvOJJvCTR6chlaUskWuvboC_RLNxfYC9YAxQ9CD2xwab6yWre_1duR39l2jloCDD25N5SNXVQqwJh7rT8z7ARrvTI8_EDjQDT-dNAl5BAMbbgYDmGaaaVsBP7X5qNwt9SMA-iO2vrhMd09jmdBMYYc5fs2SBRaSBYe0LIOWSLhwjZ8nNOM3kGtii10uH7jhzTpns5Cm-"/>
+                <div className="w-12 h-12 rounded-full border border-primary/30 bg-surface-variant flex items-center justify-center">
+                  <User className="w-6 h-6 text-outline" />
+                </div>
                 <div className="flex flex-col">
                   <span className="font-title-md text-title-md text-on-surface">Julian Thorne</span>
                   <span className="font-label-caps text-label-caps text-outline uppercase">Design Lead, Project Zenith</span>
@@ -42,7 +45,7 @@ export default function SharePage() {
             <article className="glass-card rounded-[28px] p-8 md:p-12 space-y-8 text-on-surface-variant bg-surface-container-low/40 border border-white/5 backdrop-blur-xl">
               <section className="space-y-4">
                 <h2 className="font-title-md text-title-md text-on-surface flex items-center gap-3">
-                  <span className="material-symbols-outlined text-primary">architecture</span>
+                  <PenTool className="text-primary w-6 h-6" />
                   I. Core Philosophy
                 </h2>
                 <p className="font-body-lg text-body-lg leading-relaxed">
@@ -52,7 +55,7 @@ export default function SharePage() {
               
               <section className="space-y-4">
                 <h2 className="font-title-md text-title-md text-on-surface flex items-center gap-3">
-                  <span className="material-symbols-outlined text-primary">palette</span>
+                  <Palette className="text-primary w-6 h-6" />
                   II. Visual Tokens
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,22 +80,24 @@ export default function SharePage() {
                 <h3 className="font-title-md text-title-md text-on-surface">III. Functional Requirements</h3>
                 <ul className="space-y-3 list-none">
                   <li className="flex gap-4">
-                    <span className="material-symbols-outlined text-primary-container">check_circle</span>
+                    <CheckCircle2 className="text-primary-container w-6 h-6 shrink-0" />
                     <span className="font-body-lg text-body-lg">Haptic feedback synchronized with <span className="text-primary font-semibold">Iris-tinted</span> hover states.</span>
                   </li>
                   <li className="flex gap-4">
-                    <span className="material-symbols-outlined text-primary-container">check_circle</span>
+                    <CheckCircle2 className="text-primary-container w-6 h-6 shrink-0" />
                     <span className="font-body-lg text-body-lg">Transition durations locked at <span className="text-primary font-semibold">300ms</span> with Ease-Out-Expo curves.</span>
                   </li>
                   <li className="flex gap-4">
-                    <span className="material-symbols-outlined text-primary-container">check_circle</span>
+                    <CheckCircle2 className="text-primary-container w-6 h-6 shrink-0" />
                     <span className="font-body-lg text-body-lg">Dynamic blur coefficients for background glass components (min 12px).</span>
                   </li>
                 </ul>
               </section>
               
               <div className="relative w-full aspect-video rounded-xl overflow-hidden mt-8">
-                <img alt="Design Inspiration" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfCJjreOM3jQvcbtm5mBbFgO7MaO4yBcQdogDxVmn3bw4evEC18HgM8e0eLd4GEJ1y216Zgrn9vJgH4zwmpNkWIda64bachUcl6KanKpKUqjYrwBslfZcpH_ppDtXl1P-gRmBYBvKj0GdZRle1CZgVLnwZjCjOuDY6xUuP1o1ge0D7Zhq7RKNiZDZQp9VvF-uY-F_zcvJVKu5JLZ5oGP2ToxNRRXVCGLPMHW3VybiFad_syxEwN-T1cMGGAo_KutDFcK-R97AC-4a1"/>
+                <div className="w-full h-full bg-gradient-to-br from-primary/10 to-surface-container flex items-center justify-center">
+                  <span className="text-outline font-label-caps tracking-widest">VISUALIZATION PLACEHOLDER</span>
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent flex items-end p-6">
                   <p className="font-label-caps text-label-caps text-on-surface-variant italic">Fig 1.1: Mood study for motion and texture interactions.</p>
                 </div>
@@ -105,7 +110,7 @@ export default function SharePage() {
             {/* Shared Badge */}
             <div className="glass-card rounded-[28px] bg-surface-container-low/40 border border-white/5 backdrop-blur-xl p-8 text-center space-y-4">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <span className="material-symbols-outlined text-primary text-4xl">share_reviews</span>
+                <Share2 className="text-primary w-8 h-8" />
               </div>
               <div>
                 <h4 className="font-title-md text-title-md text-on-surface">Shared from Peblo</h4>
@@ -132,7 +137,7 @@ export default function SharePage() {
               <div className="flex justify-between items-center">
                 <span className="font-label-caps text-label-caps text-outline uppercase">Visibility</span>
                 <span className="flex items-center gap-1 text-primary">
-                  <span className="material-symbols-outlined text-sm">public</span>
+                  <Globe className="w-4 h-4" />
                   <span className="font-label-caps text-label-caps">Public</span>
                 </span>
               </div>
