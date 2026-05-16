@@ -1,17 +1,20 @@
 import React from 'react';
+import { User, SlidersHorizontal, Sparkles } from 'lucide-react';
 
 export default function SettingsPage() {
   return (
     <div className="flex-1 overflow-y-auto custom-scrollbar h-full w-full bg-surface">
       <div className="max-w-4xl mx-auto p-12">
-        <h1 className="font-display-hero text-[48px] text-on-surface mb-12">Settings</h1>
+        <h1 className="font-display-hero text-display-hero text-on-surface mb-12">Settings</h1>
         
         {/* User Profile Card */}
         <div className="glass-card bg-surface-container-low border border-white/5 rounded-[28px] p-8 mb-12 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <img alt="User profile avatar" className="w-20 h-20 rounded-full border-2 border-secondary/30 object-cover shadow-[0_0_20px_rgba(221,184,255,0.15)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2fZ8NBG0ol0ykCKQyNcX6DBeK7TGrhQericZ4MWCTLwp1zZJSd4wu7tcXNoEJX8fDKs0Q51BTYTSAfpf1mJVUrKKUlGQrUGPyblXAUBK22EwKh9zQZAouRkDDZd1ZO1cBGm-qiCSwsS_5LjiXXfpT_x_2VFcl8IwzSgUrty5pF_pgFE02dIpqdOWNwlgyK1d_vzSpT9YD048YEb5BED_8IffTdGEQbGDn_HQHfOx-RZETujmH7Of8QmCPwkhAHnyyUIc-SNxY6VaS"/>
+            <div className="w-20 h-20 rounded-full border-2 border-secondary/30 bg-surface-variant flex items-center justify-center shadow-[0_0_20px_rgba(221,184,255,0.15)]">
+              <User className="w-10 h-10 text-outline" />
+            </div>
             <div>
-              <h2 className="font-title-md text-[24px] text-on-surface">Julian Rossi</h2>
+              <h2 className="font-title-md text-headline-lg text-on-surface">Julian Rossi</h2>
               <p className="text-body-sm text-outline">julian@peblo.ai</p>
             </div>
           </div>
@@ -23,8 +26,8 @@ export default function SettingsPage() {
         <div className="space-y-12">
           {/* SECTION 1 - Account */}
           <section className="space-y-6">
-            <h3 className="font-title-md text-[20px] text-primary flex items-center gap-3 border-b border-white/5 pb-4">
-              <span className="material-symbols-outlined text-[20px]">person</span>
+            <h3 className="font-title-md text-title-md text-primary flex items-center gap-3 border-b border-white/5 pb-4">
+              <User className="w-5 h-5" />
               Account
             </h3>
             <div className="glass-card bg-surface-container-lowest border border-white/5 rounded-[24px] p-8 space-y-8">
@@ -64,8 +67,8 @@ export default function SettingsPage() {
 
           {/* SECTION 2 - Workspace Preferences */}
           <section className="space-y-6">
-            <h3 className="font-title-md text-[20px] text-primary flex items-center gap-3 border-b border-white/5 pb-4">
-              <span className="material-symbols-outlined text-[20px]">tune</span>
+            <h3 className="font-title-md text-title-md text-primary flex items-center gap-3 border-b border-white/5 pb-4">
+              <SlidersHorizontal className="w-5 h-5" />
               Workspace Preferences
             </h3>
             <div className="glass-card bg-surface-container-lowest border border-white/5 rounded-[24px] p-8 space-y-8">
@@ -94,8 +97,8 @@ export default function SettingsPage() {
 
           {/* SECTION 3 - AI Settings */}
           <section className="space-y-6">
-            <h3 className="font-title-md text-[20px] text-primary flex items-center gap-3 border-b border-white/5 pb-4">
-              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+            <h3 className="font-title-md text-title-md text-primary flex items-center gap-3 border-b border-white/5 pb-4">
+              <Sparkles className="w-5 h-5" />
               AI Integration
             </h3>
             <div className="glass-card bg-surface-container-lowest border border-white/5 rounded-[24px] p-8 space-y-8">
