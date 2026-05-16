@@ -1,9 +1,63 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useRef } from 'react';
 import { Footer } from '@/components/layout/footer';
+import { Search, Bell, History, FileText, Sparkles, Users, TrendingUp, ArrowRight, Wand2, ExternalLink, Lightbulb, Link as LinkIcon, CalendarDays, BarChart3 } from 'lucide-react';
+import { motion, useInView, useAnimation, Variants } from 'framer-motion';
+
+// Helper component for counting numbers
+function CountingNumber({ value, suffix = '', prefix = '' }: { value: number, suffix?: string, prefix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (isInView && ref.current) {
+      let start = 0;
+      const duration = 2000;
+      const startTime = performance.now();
+
+      const updateCounter = (currentTime: number) => {
+        const elapsedTime = currentTime - startTime;
+        if (elapsedTime < duration) {
+          // Easing function (easeOutExpo)
+          const progress = elapsedTime / duration;
+          const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+          const currentVal = Math.round(start + (value - start) * easeProgress);
+          
+          if (ref.current) {
+            ref.current.textContent = `${prefix}${currentVal}${suffix}`;
+          }
+          requestAnimationFrame(updateCounter);
+        } else {
+          if (ref.current) {
+            ref.current.textContent = `${prefix}${value}${suffix}`;
+          }
+        }
+      };
+
+      requestAnimationFrame(updateCounter);
+    }
+  }, [value, isInView, suffix, prefix]);
+
+  return <span ref={ref}>{prefix}0{suffix}</span>;
+}
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+};
 
 export default function InsightsPage() {
   return (
-    <div className="flex-1 flex flex-col min-h-screen">
+    <div className="flex-1 flex flex-col h-full overflow-y-auto custom-scrollbar">
       {/* TopNavBar Shell */}
       <header className="flex justify-between items-center w-full px-margin-desktop h-16 z-40 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-white/5 docked full-width top-0 sticky">
         <div className="flex items-center gap-8">
@@ -11,12 +65,12 @@ export default function InsightsPage() {
         </div>
         <div className="flex items-center gap-6">
           <div className="relative hidden lg:block">
-            <input className="bg-surface-container-low border-none rounded-full px-10 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary/40 placeholder:text-outline/50 text-on-surface outline-none" placeholder="Search insights..." type="text"/>
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline/50 scale-75">search</span>
+            <input className="bg-surface-container-low border-none rounded-full px-10 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary/40 placeholder:text-outline/50 text-on-surface outline-none transition-all" placeholder="Search insights..." type="text"/>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-outline/50 w-4 h-4" />
           </div>
           <div className="flex items-center gap-4 text-on-surface-variant">
-            <span className="material-symbols-outlined hover:text-primary cursor-pointer transition-colors">notifications</span>
-            <span className="material-symbols-outlined hover:text-primary cursor-pointer transition-colors">history</span>
+            <Bell className="w-5 h-5 hover:text-primary cursor-pointer transition-colors" />
+            <History className="w-5 h-5 hover:text-primary cursor-pointer transition-colors" />
             <button className="px-4 py-1.5 border border-secondary text-secondary font-medium rounded-full text-sm hover:bg-secondary/10 transition-all">Share</button>
           </div>
         </div>
@@ -25,82 +79,103 @@ export default function InsightsPage() {
       {/* Dashboard Grid Content */}
       <div className="p-margin-desktop space-y-gutter flex-1">
         {/* Top Row: Stat Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
-          <div className="glass-card rounded-[28px] p-6 flex flex-col justify-between h-40">
+        <motion.section 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter"
+        >
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-6 flex flex-col justify-between h-40 hover:-translate-y-1 transition-transform">
             <div className="flex justify-between items-start">
               <p className="font-label-caps text-label-caps text-outline uppercase">Total Notes</p>
-              <span className="material-symbols-outlined text-primary">description</span>
+              <FileText className="text-primary w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-headline-lg text-headline-lg leading-none">124</h3>
+              <h3 className="font-headline-lg text-headline-lg leading-none"><CountingNumber value={124} /></h3>
               <p className="font-body-sm text-body-sm text-on-surface-variant mt-2">Active repository</p>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="glass-card rounded-[28px] p-6 flex flex-col justify-between h-40 glow-amber border border-primary/20">
-            <div className="flex justify-between items-start">
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-6 flex flex-col justify-between h-40 glow-amber border border-primary/20 hover:-translate-y-1 transition-transform relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
+            <div className="flex justify-between items-start relative z-10">
               <p className="font-label-caps text-label-caps text-outline uppercase">AI Summaries</p>
-              <span className="material-symbols-outlined text-primary-container" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+              <Sparkles className="text-primary-container w-6 h-6 animate-pulse" />
             </div>
-            <div>
-              <h3 className="font-headline-lg text-headline-lg leading-none">89</h3>
+            <div className="relative z-10">
+              <h3 className="font-headline-lg text-headline-lg leading-none"><CountingNumber value={89} /></h3>
               <p className="font-body-sm text-body-sm text-on-surface-variant mt-2">Intelligence generated</p>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="glass-card rounded-[28px] p-6 flex flex-col justify-between h-40">
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-6 flex flex-col justify-between h-40 hover:-translate-y-1 transition-transform">
             <div className="flex justify-between items-start">
               <p className="font-label-caps text-label-caps text-outline uppercase">Collaboration</p>
-              <span className="material-symbols-outlined text-secondary">group</span>
+              <Users className="text-secondary w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-headline-lg text-headline-lg leading-none">12</h3>
+              <h3 className="font-headline-lg text-headline-lg leading-none"><CountingNumber value={12} /></h3>
               <p className="font-body-sm text-body-sm text-on-surface-variant mt-2">Shared workspaces</p>
             </div>
-          </div>
+          </motion.div>
           
-          <div className="glass-card rounded-[28px] p-6 flex flex-col justify-between h-40">
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-6 flex flex-col justify-between h-40 hover:-translate-y-1 transition-transform">
             <div className="flex justify-between items-start">
               <p className="font-label-caps text-label-caps text-outline uppercase">Weekly Activity</p>
-              <span className="material-symbols-outlined text-primary">trending_up</span>
+              <TrendingUp className="text-primary w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-headline-lg text-headline-lg leading-none text-primary">+15%</h3>
+              <h3 className="font-headline-lg text-headline-lg leading-none text-primary"><CountingNumber value={15} prefix="+" suffix="%" /></h3>
               <p className="font-body-sm text-body-sm text-on-surface-variant mt-2">Since last Monday</p>
             </div>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* Middle: Activity Trends */}
-        <section className="glass-card rounded-[28px] p-8 h-[400px] flex flex-col">
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="glass-card rounded-[28px] p-8 h-[400px] flex flex-col"
+        >
           <div className="flex justify-between items-center mb-10">
             <div>
               <h4 className="font-title-md text-title-md text-on-surface">Activity Trends</h4>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Cognitive output over the last 30 days</p>
             </div>
             <div className="flex gap-2">
-              <span className="px-3 py-1 rounded-full bg-surface-variant text-label-caps text-primary cursor-pointer">Daily</span>
+              <span className="px-3 py-1 rounded-full bg-surface-variant text-label-caps text-primary cursor-pointer hover:bg-surface-variant/80 transition-colors">Daily</span>
               <span className="px-3 py-1 rounded-full text-label-caps text-outline cursor-pointer hover:bg-surface-variant/50 transition-colors">Weekly</span>
             </div>
           </div>
           <div className="flex-1 relative flex items-end gap-1">
-            <div className="flex-1 bg-gradient-to-t from-primary/20 to-primary/5 rounded-t-lg h-[40%]" title="Day 1"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/30 to-primary/10 rounded-t-lg h-[55%]" title="Day 2"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/25 to-primary/5 rounded-t-lg h-[45%]" title="Day 3"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/40 to-primary/15 rounded-t-lg h-[70%]" title="Day 4"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/60 to-primary/20 rounded-t-lg h-[85%]" title="Day 5"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/35 to-primary/10 rounded-t-lg h-[60%]" title="Day 6"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/50 to-primary/15 rounded-t-lg h-[75%]" title="Day 7"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/45 to-primary/10 rounded-t-lg h-[65%]" title="Day 8"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/20 to-primary/5 rounded-t-lg h-[30%]" title="Day 9"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/10 to-primary/5 rounded-t-lg h-[15%]" title="Day 10"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/30 to-primary/10 rounded-t-lg h-[50%]" title="Day 11"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/55 to-primary/20 rounded-t-lg h-[80%]" title="Day 12"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/70 to-primary/30 rounded-t-lg h-[95%]" title="Day 13"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/40 to-primary/15 rounded-t-lg h-[60%]" title="Day 14"></div>
-            <div className="flex-1 bg-gradient-to-t from-primary/30 to-primary/10 rounded-t-lg h-[45%]" title="Day 15"></div>
+            {[40, 55, 45, 70, 85, 60, 75, 65, 30, 15, 50, 80, 95, 60, 45].map((height, i) => (
+              <motion.div 
+                key={i}
+                initial={{ height: "0%" }}
+                animate={{ height: `${height}%` }}
+                transition={{ duration: 0.8, delay: 0.4 + i * 0.05, type: "spring", bounce: 0.3 }}
+                className="flex-1 bg-gradient-to-t from-primary/30 to-primary/5 hover:from-primary/50 hover:to-primary/20 transition-colors rounded-t-lg relative group cursor-pointer"
+                title={`Day ${i + 1}`}
+              >
+                {/* Tooltip on hover */}
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-white/10 text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                  {height} actions
+                </div>
+              </motion.div>
+            ))}
+            
             <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1000 100">
-              <path className="opacity-80" d="M0,80 Q100,20 200,60 T400,10 T600,70 T800,30 T1000,50" fill="none" stroke="#D4AF37" strokeWidth="2"></path>
+              <motion.path 
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 0.8 }}
+                transition={{ duration: 1.5, delay: 1, ease: "easeInOut" }}
+                className="opacity-80" 
+                d="M0,80 Q100,20 200,60 T400,10 T600,70 T800,30 T1000,50" 
+                fill="none" 
+                stroke="#D4AF37" 
+                strokeWidth="2"
+              />
             </svg>
           </div>
           <div className="flex justify-between mt-4 font-label-caps text-[10px] text-outline uppercase tracking-widest">
@@ -108,176 +183,170 @@ export default function InsightsPage() {
             <span>Oct 15</span>
             <span>Oct 30</span>
           </div>
-        </section>
+        </motion.section>
 
         {/* Bottom Row: Tags & Activity */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-gutter pb-margin-desktop">
+        <motion.section 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-gutter pb-margin-desktop"
+        >
           {/* Most Used Tags */}
-          <div className="glass-card rounded-[28px] p-8 lg:col-span-1">
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-8 lg:col-span-1">
             <h4 className="font-title-md text-title-md text-on-surface mb-6">Most Used Tags</h4>
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-primary"></span>
-                  <span className="font-body-lg text-body-lg">Strategy</span>
+              {[
+                { name: 'Strategy', color: 'bg-primary', count: 42, width: '100%' },
+                { name: 'Roadmap', color: 'bg-secondary', count: 28, width: '66%' },
+                { name: 'Design', color: 'bg-tertiary', count: 19, width: '45%' },
+                { name: 'Personal', color: 'bg-outline', count: 12, width: '28%' }
+              ].map((tag, i) => (
+                <div key={tag.name} className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className={`w-2 h-2 rounded-full ${tag.color}`}></span>
+                      <span className="font-body-lg text-body-lg">{tag.name}</span>
+                    </div>
+                    <span className="font-label-caps text-outline">{tag.count} Notes</span>
+                  </div>
+                  <div className="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: "0%" }}
+                      animate={{ width: tag.width }}
+                      transition={{ duration: 1, delay: 0.5 + i * 0.1 }}
+                      className={`h-full ${tag.color} rounded-full`}
+                    />
+                  </div>
                 </div>
-                <span className="font-label-caps text-outline">42 Notes</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-secondary"></span>
-                  <span className="font-body-lg text-body-lg">Roadmap</span>
-                </div>
-                <span className="font-label-caps text-outline">28 Notes</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-tertiary"></span>
-                  <span className="font-body-lg text-body-lg">Design</span>
-                </div>
-                <span className="font-label-caps text-outline">19 Notes</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-outline"></span>
-                  <span className="font-body-lg text-body-lg">Personal</span>
-                </div>
-                <span className="font-label-caps text-outline">12 Notes</span>
-              </div>
+              ))}
             </div>
-            <button className="mt-8 text-secondary font-label-caps flex items-center gap-2 hover:underline">
+            <button className="mt-8 text-secondary font-label-caps flex items-center gap-2 hover:underline group">
               VIEW ALL TAXONOMY
-              <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </button>
-          </div>
+          </motion.div>
 
           {/* Recent AI Actions List */}
-          <div className="glass-card rounded-[28px] p-8 lg:col-span-2">
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-8 lg:col-span-2">
             <h4 className="font-title-md text-title-md text-on-surface mb-6">Recent AI Actions</h4>
-            <div className="space-y-1">
-              <div className="flex items-center gap-6 p-4 rounded-xl hover:bg-surface-variant/30 transition-all group">
-                <div className="w-10 h-10 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
-                  <span className="material-symbols-outlined scale-75">auto_fix_high</span>
-                </div>
-                <div className="flex-1">
-                  <p className="font-body-lg text-body-lg text-on-surface">Summarized "Q4 Brand Strategy"</p>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant">2 minutes ago • Workspace A</p>
-                </div>
-                <span className="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">open_in_new</span>
-              </div>
-              
-              <div className="flex items-center gap-6 p-4 rounded-xl hover:bg-surface-variant/30 transition-all group">
-                <div className="w-10 h-10 rounded-full bg-primary-container/20 border border-primary/20 flex items-center justify-center text-primary">
-                  <span className="material-symbols-outlined scale-75">lightbulb</span>
-                </div>
-                <div className="flex-1">
-                  <p className="font-body-lg text-body-lg text-on-surface">Identified action items from "Stakeholder Sync"</p>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant">1 hour ago • Collaboration Hub</p>
-                </div>
-                <span className="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">open_in_new</span>
-              </div>
-              
-              <div className="flex items-center gap-6 p-4 rounded-xl hover:bg-surface-variant/30 transition-all group">
-                <div className="w-10 h-10 rounded-full bg-secondary-container/20 border border-secondary/20 flex items-center justify-center text-secondary">
-                  <span className="material-symbols-outlined scale-75">link</span>
-                </div>
-                <div className="flex-1">
-                  <p className="font-body-lg text-body-lg text-on-surface">Linked "Roadmap v2" to 4 existing strategy notes</p>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant">4 hours ago • Semantic Web</p>
-                </div>
-                <span className="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">open_in_new</span>
-              </div>
+            <div className="space-y-2">
+              {[
+                { icon: Wand2, title: 'Summarized "Q4 Brand Strategy"', time: '2 minutes ago', location: 'Workspace A', color: 'tertiary' },
+                { icon: Lightbulb, title: 'Identified action items from "Stakeholder Sync"', time: '1 hour ago', location: 'Collaboration Hub', color: 'primary' },
+                { icon: LinkIcon, title: 'Linked "Roadmap v2" to 4 existing strategy notes', time: '4 hours ago', location: 'Semantic Web', color: 'secondary' }
+              ].map((action, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.6 + i * 0.1 }}
+                  whileHover={{ x: 4, backgroundColor: "rgba(255,255,255,0.03)" }}
+                  className="flex items-center gap-6 p-4 rounded-xl border border-transparent hover:border-white/5 transition-all group cursor-pointer"
+                >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${action.color}-container/20 border border-${action.color}/20 text-${action.color}`}>
+                    <action.icon className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-body-lg text-body-lg text-on-surface group-hover:text-primary transition-colors">{action.title}</p>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">{action.time} • {action.location}</p>
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-outline opacity-0 group-hover:opacity-100 transition-opacity" />
+                </motion.div>
+              ))}
             </div>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
+
         {/* Enhanced Insights Bottom Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-gutter pb-margin-desktop">
+        <motion.section 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-gutter pb-margin-desktop"
+        >
           {/* This Week Summary */}
-          <div className="glass-card rounded-[28px] p-8 lg:col-span-1 bg-surface-container border border-primary/20">
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-8 lg:col-span-1 bg-surface-container border border-primary/20 hover:-translate-y-1 transition-transform shadow-[0_0_30px_rgba(242,202,80,0.05)]">
             <h4 className="font-title-md text-title-md text-on-surface mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">calendar_month</span>
+              <CalendarDays className="text-primary w-5 h-5" />
               This Week
             </h4>
             <div className="space-y-4">
               <p className="font-body-lg text-on-surface-variant leading-relaxed">
                 You've been heavily focused on <span className="text-primary font-medium">Product Strategy</span> and <span className="text-secondary font-medium">Design Systems</span>.
               </p>
-              <div className="p-4 bg-surface-container-low rounded-xl border border-white/5 space-y-2">
-                <div className="flex justify-between text-body-sm">
+              <div className="p-4 bg-surface-container-low rounded-xl border border-white/5 space-y-2 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-16 -mt-16 pointer-events-none"></div>
+                <div className="flex justify-between text-body-sm relative z-10">
                   <span className="text-outline">Notes Created</span>
-                  <span className="text-on-surface font-medium">12</span>
+                  <span className="text-on-surface font-medium"><CountingNumber value={12} /></span>
                 </div>
-                <div className="flex justify-between text-body-sm">
+                <div className="flex justify-between text-body-sm relative z-10">
                   <span className="text-outline">AI Invocations</span>
-                  <span className="text-on-surface font-medium">34</span>
+                  <span className="text-on-surface font-medium"><CountingNumber value={34} /></span>
                 </div>
-                <div className="flex justify-between text-body-sm">
+                <div className="flex justify-between text-body-sm relative z-10">
                   <span className="text-outline">Reading Time</span>
                   <span className="text-on-surface font-medium">2h 15m</span>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* AI Usage Breakdown */}
-          <div className="glass-card rounded-[28px] p-8 lg:col-span-1">
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-8 lg:col-span-1 hover:-translate-y-1 transition-transform">
             <h4 className="font-title-md text-title-md text-on-surface mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-secondary">analytics</span>
+              <BarChart3 className="text-secondary w-5 h-5" />
               AI Usage
             </h4>
             <div className="space-y-5">
-              <div>
-                <div className="flex justify-between text-body-sm mb-1">
-                  <span className="text-on-surface">Summarization</span>
-                  <span className="text-outline">45%</span>
+              {[
+                { name: 'Summarization', percent: 45, color: 'bg-primary' },
+                { name: 'Action Item Extraction', percent: 30, color: 'bg-secondary' },
+                { name: 'Semantic Search', percent: 25, color: 'bg-tertiary' }
+              ].map((item, i) => (
+                <div key={item.name}>
+                  <div className="flex justify-between text-body-sm mb-1">
+                    <span className="text-on-surface">{item.name}</span>
+                    <span className="text-outline">{item.percent}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: "0%" }}
+                      animate={{ width: `${item.percent}%` }}
+                      transition={{ duration: 1, delay: 0.8 + i * 0.1, type: "spring" }}
+                      className={`h-full ${item.color} rounded-full`}
+                    />
+                  </div>
                 </div>
-                <div className="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
-                  <div className="w-[45%] h-full bg-primary rounded-full"></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-body-sm mb-1">
-                  <span className="text-on-surface">Action Item Extraction</span>
-                  <span className="text-outline">30%</span>
-                </div>
-                <div className="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
-                  <div className="w-[30%] h-full bg-secondary rounded-full"></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-body-sm mb-1">
-                  <span className="text-on-surface">Semantic Search</span>
-                  <span className="text-outline">25%</span>
-                </div>
-                <div className="w-full h-1.5 bg-surface-variant rounded-full overflow-hidden">
-                  <div className="w-[25%] h-full bg-tertiary rounded-full"></div>
-                </div>
-              </div>
+              ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Recently Edited */}
-          <div className="glass-card rounded-[28px] p-8 lg:col-span-1">
+          <motion.div variants={itemVariants} className="glass-card rounded-[28px] p-8 lg:col-span-1 hover:-translate-y-1 transition-transform">
             <h4 className="font-title-md text-title-md text-on-surface mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-outline">history</span>
+              <History className="text-outline w-5 h-5" />
               Recently Edited
             </h4>
             <div className="space-y-4">
-              <div className="group cursor-pointer">
-                <h5 className="font-body-lg text-on-surface group-hover:text-primary transition-colors">Q4 Roadmap</h5>
-                <p className="text-body-sm text-outline">Updated 2h ago</p>
-              </div>
-              <div className="group cursor-pointer">
-                <h5 className="font-body-lg text-on-surface group-hover:text-primary transition-colors">Brand Guidelines</h5>
-                <p className="text-body-sm text-outline">Updated yesterday</p>
-              </div>
-              <div className="group cursor-pointer">
-                <h5 className="font-body-lg text-on-surface group-hover:text-primary transition-colors">User Research Synthesis</h5>
-                <p className="text-body-sm text-outline">Updated 3 days ago</p>
-              </div>
+              {[
+                { title: 'Q4 Roadmap', time: 'Updated 2h ago' },
+                { title: 'Brand Guidelines', time: 'Updated yesterday' },
+                { title: 'User Research Synthesis', time: 'Updated 3 days ago' }
+              ].map((item, i) => (
+                <motion.div 
+                  key={i}
+                  whileHover={{ x: 4 }}
+                  className="group cursor-pointer border-l-2 border-transparent hover:border-primary pl-3 -ml-3 transition-all"
+                >
+                  <h5 className="font-body-lg text-on-surface group-hover:text-primary transition-colors">{item.title}</h5>
+                  <p className="text-body-sm text-outline">{item.time}</p>
+                </motion.div>
+              ))}
             </div>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
       </div>
       <Footer />
     </div>
