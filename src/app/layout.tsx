@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: "The intelligent canvas for high-stakes thinkers. Harness the power of generative AI.",
 };
 
+import { MotionProvider } from "@/components/providers/motion-provider";
+import { SessionProvider } from "@/components/providers/session-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -17,7 +20,13 @@ export default function RootLayout({
       lang="en"
       className={`dark ${hankenGrotesk.variable} ${bodoniModa.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SessionProvider>
+          <MotionProvider>
+            {children}
+          </MotionProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 }
