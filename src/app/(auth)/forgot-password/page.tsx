@@ -10,8 +10,8 @@ export default function ForgotPasswordPage() {
   if (isSubmitted) {
     return (
       <AuthLayout
-        heading="Check your inbox."
-        subheading="A password reset link has been sent to julian@peblo.ai. The link expires in 15 minutes."
+        title="Check your inbox."
+        subtitle="A password reset link has been sent to julian@peblo.ai. The link expires in 15 minutes."
       >
         <div className="flex flex-col items-center justify-center text-center space-y-8 mt-12">
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 shadow-[0_0_30px_rgba(242,202,80,0.15)]">
@@ -35,8 +35,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthLayout
-      heading="Reset your access."
-      subheading="We'll send a secure link to your inbox."
+      title="Reset your access."
+      subtitle="We'll send a secure link to your inbox."
     >
       <form 
         className="space-y-6 mt-8" 

@@ -21,8 +21,8 @@ export default function ResetPasswordPage() {
   if (isSuccess) {
     return (
       <AuthLayout
-        heading="All set."
-        subheading="Your password has been updated. You can now sign in with your new credentials."
+        title="All set."
+        subtitle="Your password has been updated. You can now sign in with your new credentials."
       >
         <div className="flex flex-col items-center justify-center text-center space-y-8 mt-12">
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 shadow-[0_0_30px_rgba(242,202,80,0.15)] animate-pulse">
@@ -41,8 +41,8 @@ export default function ResetPasswordPage() {
 
   return (
     <AuthLayout
-      heading="Set a new password."
-      subheading="Make it strong. Make it yours."
+      title="Set a new password."
+      subtitle="Make it strong. Make it yours."
     >
       <form 
         className="space-y-6 mt-8" 

@@ -1,13 +1,19 @@
+@import "./tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "./tokens.css";
-
 @layer base {
   body {
-    @apply bg-background text-on-surface antialiased selection:bg-primary-container/30;
+    background-color: var(--color-background);
+    color: var(--color-on-surface);
+    @apply antialiased;
     font-family: var(--font-hanken-grotesk), sans-serif;
+  }
+  ::selection {
+    background-color: var(--color-primary-container);
+    color: var(--color-on-primary-container);
   }
 }
 

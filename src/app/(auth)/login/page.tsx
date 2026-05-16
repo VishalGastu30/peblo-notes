@@ -7,8 +7,8 @@ import { AuthLayout } from '@/components/auth/auth-layout';
 export default function LoginPage() {
   return (
     <AuthLayout
-      heading="Welcome back."
-      subheading="Continue your intellectual journey."
+      title="Welcome back."
+      subtitle="Continue your intellectual journey."
     >
       <form className="space-y-6 mt-8" onSubmit={(e) => e.preventDefault()}>
         <div className="space-y-4">

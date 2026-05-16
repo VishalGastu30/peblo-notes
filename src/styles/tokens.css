@@ -1,5 +1,4 @@
-@layer base {
-  :root {
+:root {
     --color-surface: #131315;
     --color-surface-dim: #131315;
     --color-surface-bright: #39393b;
@@ -51,4 +50,3 @@
   .dark {
     /* Same since we are dark mode first */
   }
-}
