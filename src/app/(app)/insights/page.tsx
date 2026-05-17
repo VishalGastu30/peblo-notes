@@ -7,6 +7,7 @@ import { Search, Bell, History, FileText, Sparkles, Users, TrendingUp, ArrowRigh
 import { motion, useInView, Variants } from 'framer-motion';
 import { useInsights } from '@/hooks/use-insights';
 import { formatDistanceToNow } from 'date-fns';
+import { ResponsiveContainer, LineChart, Line, Tooltip } from 'recharts';
 
 // Helper component for counting numbers
 function CountingNumber({ value, suffix = '', prefix = '' }: { value: number, suffix?: string, prefix?: string }) {
@@ -180,76 +181,47 @@ export default function InsightsPage() {
               No activity recorded in the last 30 days.
             </div>
           ) : (
-            <div className="flex-1 relative min-w-0 w-full h-full">
-              <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <defs>
-                  <linearGradient id="line-gradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.0" />
-                  </linearGradient>
-                </defs>
-                
-                {/* SVG Paths */}
-                <path 
-                  d={`M 0,100 ${trendHeights.map((h: number, i: number) => `L ${(i / (trendHeights.length - 1)) * 100},${100 - h}`).join(' ')} L 100,100 Z`}
-                  fill="url(#line-gradient)"
-                  className="transition-all duration-500 ease-in-out"
-                  vectorEffect="non-scaling-stroke"
-                />
-                
-                <polyline 
-                  points={trendHeights.map((h: number, i: number) => `${(i / (trendHeights.length - 1)) * 100},${100 - h}`).join(' ')}
-                  fill="none"
-                  stroke="var(--primary)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="transition-all duration-500 ease-in-out"
-                  vectorEffect="non-scaling-stroke"
-                />
-
-                {/* Interactive Points */}
-                {trendHeights.map((h: number, i: number) => (
-                  <g key={i} className="group cursor-pointer">
-                    <circle 
-                      cx={`${(i / (trendHeights.length - 1)) * 100}%`} 
-                      cy={`${100 - h}%`} 
-                      r="4" 
-                      fill="var(--surface)"
-                      stroke="var(--primary)"
-                      strokeWidth="2"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
-                    {/* Invisible larger hit area for easier hover */}
-                    <circle 
-                      cx={`${(i / (trendHeights.length - 1)) * 100}%`} 
-                      cy={`${100 - h}%`} 
-                      r="12" 
-                      fill="transparent"
-                    />
-                  </g>
-                ))}
-              </svg>
-
-              {/* Tooltips Overlay */}
-              <div className="absolute inset-0 flex justify-between pointer-events-none">
-                {trendHeights.map((h: number, i: number) => (
-                  <div key={i} className="flex-1 relative group pointer-events-auto">
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 -translate-y-2 bg-surface-container-high border border-white/10 text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
-                      <div className="font-bold text-primary mb-0.5">{activityTrend[i].date}</div>
-                      {activityTrend[i].notesEdited + activityTrend[i].aiActions} total actions
-                    </div>
-                  </div>
-                ))}
+            <div className="flex-1 relative min-w-0 w-full h-full pb-6">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={activityTrend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-surface-container-high border border-white/10 text-on-surface text-[10px] px-3 py-2 rounded shadow-xl">
+                            <div className="font-bold text-primary mb-1">{data.date}</div>
+                            <div>{data.notesEdited + data.aiActions} total actions</div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey={(d) => d.notesEdited + d.aiActions} 
+                    stroke="var(--primary)" 
+                    strokeWidth={2}
+                    dot={{ r: 0, fill: 'var(--surface)', stroke: 'var(--primary)', strokeWidth: 2 }}
+                    activeDot={{ r: 5, fill: 'var(--surface)', stroke: 'var(--primary)', strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+              
+              <div className="absolute bottom-0 left-0 right-0 flex justify-between font-label-caps text-[10px] text-outline uppercase tracking-widest px-2">
+                <span>30 days ago</span>
+                <span>15 days ago</span>
+                <span>Today</span>
               </div>
             </div>
           )}
-          
-          <div className="flex justify-between mt-4 font-label-caps text-[10px] text-outline uppercase tracking-widest shrink-0">
-            <span>30 days ago</span>
-            <span>15 days ago</span>
-            <span>Today</span>
-          </div>
         </motion.section>
 
         {/* Bottom Row: Tags & Activity */}
