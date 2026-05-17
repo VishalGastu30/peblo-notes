@@ -6,6 +6,9 @@ import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useAiAction } from '@/hooks/use-ai-action';
 import { useEditorStore } from '@/stores/editor-store';
 import { useNote } from '@/hooks/use-note';
+import { AiActionButton } from './ai-action-button';
+import { AiLoadingState } from './ai-loading-state';
+import { AiResultCard } from './ai-result-card';
 
 export function AIPanel() {
   const { activeNoteId } = useEditorStore();
@@ -71,21 +74,7 @@ export function AIPanel() {
       <div className="flex-1 overflow-y-auto p-6 custom-scrollbar relative z-10">
         <AnimatePresence mode="wait">
           {isGenerating ? (
-            <motion.div 
-              key="generating"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center h-full space-y-4 text-center"
-            >
-              <div className="w-16 h-16 rounded-full border border-primary/30 flex items-center justify-center bg-primary/5">
-                <Loader2 className="w-8 h-8 text-primary animate-spin" />
-              </div>
-              <div>
-                <p className="font-title-md text-on-surface">Synthesizing Context</p>
-                <p className="text-body-sm text-on-surface-variant mt-1 max-w-[200px]">Extracting core pillars and actionable intelligence.</p>
-              </div>
-            </motion.div>
+              <AiLoadingState />
           ) : (
             <motion.div 
               key="content"
@@ -103,108 +92,95 @@ export function AIPanel() {
               {state === 'idle' && !error && (
                 <motion.div variants={itemVariants} className="space-y-3">
                   <p className="text-body-sm text-on-surface-variant text-center mb-6">What would you like to generate for this note?</p>
-                  <button 
-                    onClick={() => generate('summary')}
-                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-surface-variant/30 border border-white/5 hover:bg-surface-variant hover:border-white/10 transition-colors group"
-                  >
-                    <span className="text-body-sm font-medium text-on-surface">Executive Summary</span>
-                    <Info className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
-                  </button>
-                  <button 
-                    onClick={() => generate('actions')}
-                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-surface-variant/30 border border-white/5 hover:bg-surface-variant hover:border-white/10 transition-colors group"
-                  >
-                    <span className="text-body-sm font-medium text-on-surface">Extract Action Items</span>
-                    <CheckCircle2 className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
-                  </button>
-                  <button 
-                    onClick={() => generate('title')}
-                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-surface-variant/30 border border-white/5 hover:bg-surface-variant hover:border-white/10 transition-colors group"
-                  >
-                    <span className="text-body-sm font-medium text-on-surface">Suggest Title</span>
-                    <Type className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
-                  </button>
+                  <AiActionButton 
+                    label="Executive Summary" 
+                    icon={<Info className="w-4 h-4" />} 
+                    onClick={() => generate('summary')} 
+                  />
+                  <AiActionButton 
+                    label="Extract Action Items" 
+                    icon={<CheckCircle2 className="w-4 h-4" />} 
+                    onClick={() => generate('actions')} 
+                  />
+                  <AiActionButton 
+                    label="Suggest Title" 
+                    icon={<Type className="w-4 h-4" />} 
+                    onClick={() => generate('title')} 
+                  />
                 </motion.div>
               )}
 
               {/* Results */}
               {result?.summary && (
-                <motion.div variants={itemVariants} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-label-caps text-outline uppercase">Executive Summary</span>
-                    <Info className="w-4 h-4 text-outline" />
-                  </div>
-                  <div className="p-4 rounded-2xl bg-surface-variant/30 border border-white/5 text-body-sm text-on-surface-variant leading-relaxed shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.03)] transition-shadow">
-                    {result.summary}
-                  </div>
-                  <div className="flex justify-end gap-2 mt-2">
-                    <button onClick={() => copy(result.summary!)} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Copy</button>
-                    <button onClick={() => generate('summary')} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Regenerate</button>
-                  </div>
-                </motion.div>
+                <AiResultCard
+                  variants={itemVariants}
+                  title="Executive Summary"
+                  icon={<Info className="w-4 h-4" />}
+                  content={result.summary}
+                  onCopy={() => copy(result.summary!)}
+                  onRegenerate={() => generate('summary')}
+                />
               )}
 
               {result?.actionItems && (
-                <motion.div variants={itemVariants} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-label-caps text-outline uppercase">Action Items</span>
-                    <CheckCircle2 className="w-4 h-4 text-outline" />
-                  </div>
-                  <div className="p-4 rounded-2xl bg-surface-variant/30 border border-white/5 space-y-3 shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.03)] transition-shadow">
-                    {result.actionItems.length === 0 ? (
+                <AiResultCard
+                  variants={itemVariants}
+                  title="Action Items"
+                  icon={<CheckCircle2 className="w-4 h-4" />}
+                  content={
+                    result.actionItems.length === 0 ? (
                       <p className="text-body-sm text-on-surface-variant italic">No action items found.</p>
                     ) : (
-                      result.actionItems.map((item, idx) => (
-                        <motion.div 
-                          key={idx}
-                          whileHover={{ x: 4 }}
-                          className="flex gap-3 items-start group cursor-pointer"
-                        >
-                          <Circle className="text-primary/50 w-4 h-4 mt-0.5 shrink-0 group-hover:text-primary transition-colors" />
-                          <span className="text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">{item}</span>
-                        </motion.div>
-                      ))
-                    )}
-                  </div>
-                  <div className="flex justify-end gap-2 mt-2">
-                    <button onClick={() => copy(result.actionItems!.join('\n'))} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Copy All</button>
-                    <button onClick={() => generate('actions')} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Regenerate</button>
-                  </div>
-                </motion.div>
+                      <ul className="space-y-2">
+                        {result.actionItems.map((item, idx) => (
+                          <motion.li 
+                            key={idx}
+                            whileHover={{ x: 4 }}
+                            className="flex gap-3 items-start group cursor-pointer"
+                          >
+                            <Circle className="text-primary/50 w-4 h-4 mt-0.5 shrink-0 group-hover:text-primary transition-colors" />
+                            <span className="text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">{item}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    )
+                  }
+                  onCopy={() => copy(result.actionItems!.join('\n'))}
+                  onRegenerate={() => generate('actions')}
+                />
               )}
 
               {result?.suggestedTitle && (
-                <motion.div variants={itemVariants} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-label-caps text-outline uppercase">Suggested Title</span>
-                    <Type className="w-4 h-4 text-outline" />
-                  </div>
-                  <div className="p-4 rounded-2xl bg-surface-variant/30 border border-white/5 space-y-3 shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.03)] transition-shadow">
-                    <div 
-                      className="text-body-sm font-medium text-on-surface hover:text-primary cursor-pointer transition-colors"
-                      onClick={() => updateNote({ title: result.suggestedTitle })}
-                    >
-                      {result.suggestedTitle}
-                    </div>
-                    {result.alternatives && result.alternatives.length > 0 && (
-                      <div className="pt-2 border-t border-white/5 space-y-2">
-                        <p className="text-[10px] text-outline font-label-caps uppercase tracking-widest">Alternatives</p>
-                        {result.alternatives.map((alt, idx) => (
-                          <div 
-                            key={idx} 
-                            className="text-body-sm text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
-                            onClick={() => updateNote({ title: alt })}
-                          >
-                            {alt}
-                          </div>
-                        ))}
+                <AiResultCard
+                  variants={itemVariants}
+                  title="Suggested Title"
+                  icon={<Type className="w-4 h-4" />}
+                  content={
+                    <div className="space-y-4">
+                      <div 
+                        className="text-body-sm font-medium text-on-surface hover:text-primary cursor-pointer transition-colors"
+                        onClick={() => updateNote({ title: result.suggestedTitle })}
+                      >
+                        {result.suggestedTitle}
                       </div>
-                    )}
-                  </div>
-                  <div className="flex justify-end gap-2 mt-2">
-                    <button onClick={() => generate('title')} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Regenerate</button>
-                  </div>
-                </motion.div>
+                      {result.alternatives && result.alternatives.length > 0 && (
+                        <div className="pt-2 border-t border-white/5 space-y-2">
+                          <p className="text-[10px] text-outline font-label-caps uppercase tracking-widest">Alternatives</p>
+                          {result.alternatives.map((alt, idx) => (
+                            <div 
+                              key={idx} 
+                              className="text-body-sm text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
+                              onClick={() => updateNote({ title: alt })}
+                            >
+                              {alt}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  }
+                  onRegenerate={() => generate('title')}
+                />
               )}
 
             </motion.div>
