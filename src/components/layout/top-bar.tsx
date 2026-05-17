@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 import { NotificationDropdown } from './notification-dropdown';
 import { HistoryDropdown } from './history-dropdown';
 import { cn } from '@/lib/utils';
@@ -31,6 +34,15 @@ export function TopBar({ title, showSearch = true, actions }: TopBarProps) {
           <NotificationDropdown />
           <HistoryDropdown />
           {actions}
+          <div className="md:hidden flex items-center ml-1">
+            <button
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center bg-surface-variant/50 hover:text-error hover:bg-error/10 transition-colors text-outline"
+              title="Log out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </header>

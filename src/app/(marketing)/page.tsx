@@ -42,8 +42,8 @@ export default function LandingPage() {
             <Link className="text-on-surface-variant hover:text-primary transition-colors font-label-caps text-xs tracking-widest uppercase" href="#security">Security</Link>
           </div>
         </div>
-        <div className="flex items-center gap-6">
-          <Link href="/login" className="hidden md:block text-on-surface-variant hover:text-primary font-label-caps text-xs tracking-widest uppercase transition-colors">Sign In</Link>
+        <div className="flex items-center gap-4 sm:gap-6">
+          <Link href="/login" className="text-on-surface-variant hover:text-primary font-label-caps text-[10px] sm:text-xs tracking-widest uppercase transition-colors">Sign In</Link>
           <Link href="/signup">
             <button className="bg-primary text-on-primary px-6 py-2 rounded-full font-label-caps text-xs tracking-widest uppercase hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(242,202,80,0.15)] hover:shadow-[0_0_30px_rgba(242,202,80,0.3)]">
               Get Started
