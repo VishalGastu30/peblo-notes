@@ -4,7 +4,8 @@ import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { AuthLayout } from '@/components/auth/auth-layout';
-import { CheckCircle2, Key, Eye, EyeOff, Check, X, Loader2 } from 'lucide-react';
+import { PasswordStrength } from '@/components/auth/password-strength';
+import { CheckCircle2, Key, Eye, EyeOff, X, Loader2 } from 'lucide-react';
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -143,34 +144,8 @@ function ResetPasswordForm() {
             </div>
           </div>
 
-          {/* Password Strength Indicator */}
-          <div className="space-y-3 pt-2">
-            <div className="flex gap-2 h-1.5">
-              <div className={`flex-1 rounded-full transition-colors ${strength >= 1 ? (strength === 1 ? 'bg-error' : strength === 2 ? 'bg-primary' : 'bg-[#55d699]') : 'bg-surface-variant'}`}></div>
-              <div className={`flex-1 rounded-full transition-colors ${strength >= 2 ? (strength === 2 ? 'bg-primary' : 'bg-[#55d699]') : 'bg-surface-variant'}`}></div>
-              <div className={`flex-1 rounded-full transition-colors ${strength >= 3 ? 'bg-[#55d699]' : 'bg-surface-variant'}`}></div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-body-sm">
-                <span className={hasLength ? 'text-secondary' : 'text-outline'}>
-                  {hasLength ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
-                </span>
-                <span className={hasLength ? 'text-on-surface' : 'text-outline'}>At least 8 characters</span>
-              </div>
-              <div className="flex items-center gap-2 text-body-sm">
-                <span className={hasUpper ? 'text-secondary' : 'text-outline'}>
-                  {hasUpper ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
-                </span>
-                <span className={hasUpper ? 'text-on-surface' : 'text-outline'}>One uppercase letter</span>
-              </div>
-              <div className="flex items-center gap-2 text-body-sm">
-                <span className={hasSpecial ? 'text-secondary' : 'text-outline'}>
-                  {hasSpecial ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
-                </span>
-                <span className={hasSpecial ? 'text-on-surface' : 'text-outline'}>One number or symbol</span>
-              </div>
-            </div>
+          <div className="pt-2">
+            <PasswordStrength password={password} />
           </div>
 
           <div className="space-y-2">
