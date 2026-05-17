@@ -44,8 +44,7 @@ export default function LoginPage() {
         setError('Invalid email or password');
         setIsLoading(false);
       } else {
-        router.push('/workspace');
-        router.refresh();
+        window.location.href = '/workspace';
       }
     } catch (err) {
       setError('Something went wrong. Please try again.');

@@ -46,7 +46,7 @@ export function NoteList({ initialNoteId }: NoteListProps = {}) {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  // Load preferences
+  // Load preferences — only after mount to avoid SSR/hydration mismatch
   useEffect(() => {
     const defaultSort = localStorage.getItem('peblo_default_sort') as any;
     if (defaultSort) setSort(defaultSort);

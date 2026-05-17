@@ -62,8 +62,7 @@ export default function SignUpPage() {
         // If login fails for some reason, redirect to login page
         router.push('/login');
       } else {
-        router.push('/workspace');
-        router.refresh();
+        window.location.href = '/workspace';
       }
     } catch (err) {
       setError('Something went wrong. Please try again.');
