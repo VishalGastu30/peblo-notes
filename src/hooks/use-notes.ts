@@ -7,6 +7,7 @@ export interface NoteFilters {
   tags?: string[]
   archived?: boolean
   sort?: 'updated' | 'created' | 'title'
+  sortOrder?: 'asc' | 'desc'
 }
 
 export function useNotes(filters: NoteFilters) {
@@ -18,6 +19,7 @@ export function useNotes(filters: NoteFilters) {
     if (filters.tags?.length) params.append('tags', filters.tags.join(','))
     if (filters.archived !== undefined) params.append('archived', String(filters.archived))
     if (filters.sort) params.append('sort', filters.sort)
+    if (filters.sortOrder) params.append('sortOrder', filters.sortOrder)
     if (previousPageData?.meta?.nextCursor) params.append('cursor', previousPageData.meta.nextCursor)
     params.append('limit', '50')
 

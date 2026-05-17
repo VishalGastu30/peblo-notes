@@ -20,14 +20,14 @@ export async function GET(request: Request) {
       }, { status: 422 })
     }
 
-    const { search, tags, archived, sort, cursor, limit } = validated.data
+    const { search, tags, archived, sort, sortOrder, cursor, limit } = validated.data
     const tagIds = tags ? tags.split(',').filter(Boolean) : []
     const isArchived = archived === 'true'
 
     const orderBy = {
-      updated: { updatedAt: 'desc' as const },
-      created: { createdAt: 'desc' as const },
-      title:   { title: 'asc' as const },
+      updated: { updatedAt: sortOrder },
+      created: { createdAt: sortOrder },
+      title:   { title: sortOrder },
     }[sort]
 
     const notes = await prisma.note.findMany({

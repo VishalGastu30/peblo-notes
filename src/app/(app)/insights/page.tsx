@@ -181,7 +181,7 @@ export default function InsightsPage() {
             </div>
           ) : (
             <div className="flex-1 relative min-w-0 w-full h-full">
-              <svg className="w-full h-full overflow-visible" preserveAspectRatio="none">
+              <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 100 100">
                 <defs>
                   <linearGradient id="line-gradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.4" />

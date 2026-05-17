@@ -30,6 +30,7 @@ export function NoteList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [sort, setSort] = useState<'updated' | 'created' | 'title'>('updated');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
   // Custom debounced search query
@@ -41,11 +42,20 @@ export function NoteList() {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
+  // Load preferences
+  useEffect(() => {
+    const defaultSort = localStorage.getItem('peblo_default_sort') as any;
+    if (defaultSort) setSort(defaultSort);
+    const defaultOrder = localStorage.getItem('peblo_default_sort_order') as any;
+    if (defaultOrder) setSortOrder(defaultOrder);
+  }, []);
+
   const { notes, isLoading, hasMore, loadMore } = useNotes({
     search: debouncedSearchQuery,
     tags: selectedTags,
     archived: false,
-    sort
+    sort,
+    sortOrder
   });
   
   const { tags } = useTags();
@@ -136,18 +146,31 @@ export function NoteList() {
         </AnimatePresence>
         
         <div className="flex items-center gap-2 pt-2 border-t border-white/5 mt-2">
-          <div className="relative flex items-center group cursor-pointer bg-surface-variant/30 hover:bg-surface-variant/50 px-3 py-1.5 rounded-lg transition-colors border border-white/5 w-full">
+          <div className="relative flex items-center group cursor-pointer bg-surface-variant/30 hover:bg-surface-variant/50 px-3 py-1.5 rounded-lg transition-colors border border-white/5 flex-1">
             <select 
               value={sort}
-              onChange={(e) => setSort(e.target.value as any)}
+              onChange={(e) => {
+                setSort(e.target.value as any);
+                localStorage.setItem('peblo_default_sort', e.target.value);
+              }}
               className="text-[10px] font-bold uppercase tracking-wider text-outline group-hover:text-on-surface bg-transparent border-none focus:ring-0 cursor-pointer appearance-none pl-0 py-1 z-10 w-full outline-none"
             >
               <option value="updated" className="bg-surface-container text-on-surface">Sorted by Date</option>
               <option value="created" className="bg-surface-container text-on-surface">Created Date</option>
               <option value="title" className="bg-surface-container text-on-surface">Alphabetical</option>
             </select>
-            <ArrowUpDown className="w-3.5 h-3.5 text-outline group-hover:text-on-surface transition-colors absolute right-3 pointer-events-none" />
           </div>
+          <button 
+            onClick={() => {
+              const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+              setSortOrder(newOrder);
+              localStorage.setItem('peblo_default_sort_order', newOrder);
+            }}
+            className="w-8 h-8 rounded-lg bg-surface-variant/30 hover:bg-surface-variant/50 border border-white/5 flex items-center justify-center transition-colors group relative"
+            title={sortOrder === 'asc' ? "Ascending" : "Descending"}
+          >
+            <ArrowUpDown className={cn("w-4 h-4 text-outline group-hover:text-primary transition-transform", sortOrder === 'desc' && "scale-y-[-1]")} />
+          </button>
         </div>
       </div>
 

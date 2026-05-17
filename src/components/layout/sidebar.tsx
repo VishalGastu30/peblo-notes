@@ -230,8 +230,12 @@ export function Sidebar() {
           "flex items-center gap-3 mt-3 overflow-hidden",
           isCollapsed ? "justify-center py-2" : "px-4 py-3"
         )}>
-          <div className="w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center bg-surface-variant/50 shrink-0 shadow-[0_0_8px_rgba(242,202,80,0.1)]">
-            <User className="w-4 h-4 text-on-surface-variant" />
+          <div className="w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center bg-surface-variant/50 shrink-0 shadow-[0_0_8px_rgba(242,202,80,0.1)] overflow-hidden">
+            {session?.user?.image ? (
+              <img src={session.user.image} alt={session.user.name || 'User'} className="w-full h-full object-cover" />
+            ) : (
+              <User className="w-4 h-4 text-on-surface-variant" />
+            )}
           </div>
           {!isCollapsed && (
             <span className="text-[13px] font-medium whitespace-nowrap text-on-surface-variant">

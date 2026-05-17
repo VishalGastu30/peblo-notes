@@ -35,3 +35,21 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } }, { status: 500 })
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } }, { status: 401 })
+    }
+
+    await prisma.user.delete({
+      where: { id: session.user.id }
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('[DELETE_PROFILE_ERROR]', error)
+    return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: 'Internal server error' } }, { status: 500 })
+  }
+}

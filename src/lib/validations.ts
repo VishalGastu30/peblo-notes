@@ -31,6 +31,7 @@ export const getNotesQuerySchema = z.object({
   tags: z.string().optional(), // Comma-separated tag IDs
   archived: z.enum(['true', 'false']).optional().default('false'),
   sort: z.enum(['updated', 'created', 'title']).optional().default('updated'),
+  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
   cursor: z.string().optional(),
   limit: z.coerce.number().min(1).max(100).optional().default(50),
 });
