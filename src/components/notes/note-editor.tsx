@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import { AutosaveIndicator } from './autosave-indicator';
 
 export function NoteEditor() {
   const [isHovered, setIsHovered] = useState(false);
@@ -98,38 +99,7 @@ export function NoteEditor() {
           </button>
         </div>
         <div className="flex items-center gap-4">
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={autosaveStatus}
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              className="flex items-center gap-2"
-            >
-              <div className="relative flex items-center justify-center">
-                {autosaveStatus === 'saving' && <Loader2 className="w-3 h-3 text-amber-400 animate-spin" />}
-                {autosaveStatus === 'saved' && (
-                  <>
-                    <span className="absolute w-2 h-2 rounded-full bg-primary/40 animate-ping"></span>
-                    <span className="relative w-1.5 h-1.5 rounded-full bg-primary"></span>
-                  </>
-                )}
-                {autosaveStatus === 'error' && <RefreshCcw className="w-3 h-3 text-rose-400" />}
-                {autosaveStatus === 'offline' && <span className="w-1.5 h-1.5 rounded-full bg-outline"></span>}
-              </div>
-              <span className={cn(
-                "text-[11px] font-label-caps",
-                autosaveStatus === 'saving' ? "text-amber-400" :
-                autosaveStatus === 'error' ? "text-rose-400" :
-                autosaveStatus === 'offline' ? "text-outline" : "text-outline"
-              )}>
-                {autosaveStatus === 'saving' ? 'Saving...' :
-                 autosaveStatus === 'saved' ? 'Saved to Cloud' :
-                 autosaveStatus === 'error' ? 'Save failed' :
-                 autosaveStatus === 'offline' ? 'Offline - queued' : ''}
-              </span>
-            </motion.div>
-          </AnimatePresence>
+          <AutosaveIndicator status={autosaveStatus as any} />
           <div className="flex items-center gap-2">
             <button className="px-4 py-1.5 text-body-sm font-medium border border-white/10 rounded-full hover:bg-white/5 transition-colors flex items-center gap-2 group">
               <Share2 className="w-3.5 h-3.5 text-outline group-hover:text-on-surface transition-colors" />
