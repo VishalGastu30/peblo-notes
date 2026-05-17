@@ -193,7 +193,7 @@ export default function InsightsPage() {
                 <path 
                   d={`M 0,100 ${trendHeights.map((h: number, i: number) => `L ${(i / (trendHeights.length - 1)) * 100},${100 - h}`).join(' ')} L 100,100 Z`}
                   fill="url(#line-gradient)"
-                  className="animate-in fade-in duration-1000"
+                  className="transition-all duration-500 ease-in-out"
                   vectorEffect="non-scaling-stroke"
                 />
                 
@@ -204,7 +204,7 @@ export default function InsightsPage() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="animate-in slide-in-from-left-full duration-1000"
+                  className="transition-all duration-500 ease-in-out"
                   vectorEffect="non-scaling-stroke"
                 />
 
