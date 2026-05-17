@@ -14,7 +14,7 @@ const pageTransition = {
   type: 'tween',
   ease: [0.21, 0.47, 0.32, 0.98],
   duration: 0.3,
-};
+} as const;
 
 interface PageTransitionProps {
   children: React.ReactNode;
