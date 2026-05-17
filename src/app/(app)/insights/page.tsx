@@ -7,7 +7,7 @@ import { Search, Bell, History, FileText, Sparkles, Users, TrendingUp, ArrowRigh
 import { motion, useInView, Variants } from 'framer-motion';
 import { useInsights } from '@/hooks/use-insights';
 import { formatDistanceToNow } from 'date-fns';
-import { ResponsiveContainer, LineChart, Line, Tooltip } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, Tooltip, Cell } from 'recharts';
 
 // Helper component for counting numbers
 function CountingNumber({ value, suffix = '', prefix = '' }: { value: number, suffix?: string, prefix?: string }) {
@@ -183,14 +183,9 @@ export default function InsightsPage() {
           ) : (
             <div className="flex-1 relative min-w-0 w-full h-full pb-6">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={activityTrend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="var(--primary)" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
+                <BarChart data={activityTrend} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <Tooltip
+                    cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
@@ -204,15 +199,17 @@ export default function InsightsPage() {
                       return null;
                     }}
                   />
-                  <Line 
-                    type="monotone" 
+                  <Bar 
                     dataKey={(d) => d.notesEdited + d.aiActions} 
-                    stroke="var(--primary)" 
-                    strokeWidth={2}
-                    dot={{ r: 0, fill: 'var(--surface)', stroke: 'var(--primary)', strokeWidth: 2 }}
-                    activeDot={{ r: 5, fill: 'var(--surface)', stroke: 'var(--primary)', strokeWidth: 2 }}
-                  />
-                </LineChart>
+                    fill="var(--primary)" 
+                    radius={[4, 4, 4, 4]}
+                    minPointSize={4}
+                  >
+                    {activityTrend.map((entry: any, index: number) => (
+                      <Cell key={`cell-${index}`} fill={(entry.notesEdited + entry.aiActions) > 0 ? "var(--primary)" : "var(--surface-variant)"} opacity={(entry.notesEdited + entry.aiActions) > 0 ? 1 : 0.2} />
+                    ))}
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
               
               <div className="absolute bottom-0 left-0 right-0 flex justify-between font-label-caps text-[10px] text-outline uppercase tracking-widest px-2">
