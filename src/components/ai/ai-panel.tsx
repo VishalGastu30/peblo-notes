@@ -162,28 +162,54 @@ export function AIPanel() {
                   icon={<Type className="w-4 h-4" />}
                   content={
                     <div className="space-y-4">
-                      <div 
-                        className="text-body-sm font-medium text-on-surface hover:text-primary cursor-pointer transition-colors"
-                        onClick={() => updateNote({ title: result.suggestedTitle })}
-                      >
-                        {result.suggestedTitle}
+                      <div className="group relative">
+                        <div 
+                          className="text-body-sm font-medium text-on-surface hover:text-primary cursor-pointer transition-colors pr-6"
+                          onClick={() => {
+                            updateNote({ title: result.suggestedTitle });
+                            // Using a simple DOM-based toast if useToast isn't directly available here
+                            const el = document.createElement('div');
+                            el.className = 'fixed bottom-4 right-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium z-50 animate-in slide-in-from-bottom-5';
+                            el.textContent = 'Title applied!';
+                            document.body.appendChild(el);
+                            setTimeout(() => { el.classList.add('animate-out', 'fade-out', 'slide-out-to-bottom-5'); setTimeout(() => el.remove(), 300); }, 2000);
+                          }}
+                        >
+                          {result.suggestedTitle}
+                        </div>
+                        <span className="absolute -top-6 left-0 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-primary/10 px-2 py-0.5 rounded">
+                          Click to apply
+                        </span>
                       </div>
+                      
                       {result.alternatives && result.alternatives.length > 0 && (
                         <div className="pt-2 border-t border-white/5 space-y-2">
-                          <p className="text-[10px] text-outline font-label-caps uppercase tracking-widest">Alternatives</p>
+                          <p className="text-[10px] text-outline font-label-caps uppercase tracking-widest mb-3">Alternatives</p>
                           {result.alternatives.map((alt, idx) => (
-                            <div 
-                              key={idx} 
-                              className="text-body-sm text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
-                              onClick={() => updateNote({ title: alt })}
-                            >
-                              {alt}
+                            <div key={idx} className="group relative">
+                              <div 
+                                className="text-body-sm text-on-surface-variant hover:text-primary cursor-pointer transition-colors pr-6"
+                                onClick={() => {
+                                  updateNote({ title: alt });
+                                  const el = document.createElement('div');
+                                  el.className = 'fixed bottom-4 right-4 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium z-50 animate-in slide-in-from-bottom-5';
+                                  el.textContent = 'Title applied!';
+                                  document.body.appendChild(el);
+                                  setTimeout(() => { el.classList.add('animate-out', 'fade-out', 'slide-out-to-bottom-5'); setTimeout(() => el.remove(), 300); }, 2000);
+                                }}
+                              >
+                                {alt}
+                              </div>
+                              <span className="absolute -top-6 left-0 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-primary/10 px-2 py-0.5 rounded z-10">
+                                Click to apply
+                              </span>
                             </div>
                           ))}
                         </div>
                       )}
                     </div>
                   }
+                  onCopy={() => copy([result.suggestedTitle, ...(result.alternatives || [])].join('\n'))}
                   onRegenerate={() => generate('title')}
                 />
               )}
