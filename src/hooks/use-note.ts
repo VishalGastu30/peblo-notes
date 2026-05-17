@@ -83,7 +83,6 @@ export function useNote(noteId: string | null) {
     if (!noteId) return;
     
     setPendingChanges(true)
-    setAutosaveStatus('saving')
     
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
     
@@ -91,7 +90,7 @@ export function useNote(noteId: string | null) {
       saveChanges({ content, contentText })
     }, AUTOSAVE_DELAY)
     
-  }, [noteId, saveChanges, setPendingChanges, setAutosaveStatus])
+  }, [noteId, saveChanges, setPendingChanges])
   
   const updateNote = useCallback((changes: any) => {
      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
