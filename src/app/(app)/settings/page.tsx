@@ -1,11 +1,53 @@
-import React from 'react';
-import { User, SlidersHorizontal, Sparkles } from 'lucide-react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { User, SlidersHorizontal, Sparkles, Loader2, Check } from 'lucide-react';
+import { TopBar } from '@/components/layout/top-bar';
+import { useSession } from 'next-auth/react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
+  const { data: session, update: updateSession } = useSession();
+  const { toast } = useToast();
+  
+  const [name, setName] = useState('');
+  const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (session?.user?.name) {
+      setName(session.user.name);
+    }
+  }, [session?.user?.name]);
+
+  const handleNameChange = (value: string) => {
+    setName(value);
+    setIsDirty(value !== (session?.user?.name || ''));
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
+      if (!res.ok) throw new Error('Failed to save');
+      await updateSession({ name });
+      setIsDirty(false);
+      toast({ title: 'Profile updated successfully' });
+    } catch {
+      toast({ title: 'Failed to save changes', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex-1 overflow-y-auto custom-scrollbar h-full w-full bg-surface">
+      <TopBar title="Settings" showSearch={false} />
       <div className="max-w-4xl mx-auto p-12">
-        <h1 className="font-display-hero text-display-hero text-on-surface mb-12">Settings</h1>
         
         {/* User Profile Card */}
         <div className="glass-card bg-surface-container-low border border-white/5 rounded-[28px] p-8 mb-12 flex items-center justify-between">
@@ -14,13 +56,10 @@ export default function SettingsPage() {
               <User className="w-10 h-10 text-outline" />
             </div>
             <div>
-              <h2 className="font-title-md text-headline-lg text-on-surface">Julian Rossi</h2>
-              <p className="text-body-sm text-outline">julian@peblo.ai</p>
+              <h2 className="font-title-md text-headline-lg text-on-surface">{session?.user?.name || 'User'}</h2>
+              <p className="text-body-sm text-outline">{session?.user?.email || ''}</p>
             </div>
           </div>
-          <button className="px-6 py-2 border border-white/10 text-on-surface rounded-xl font-label-caps tracking-widest hover:bg-white/5 transition-colors">
-            EDIT PROFILE
-          </button>
         </div>
 
         <div className="space-y-12">
@@ -36,7 +75,12 @@ export default function SettingsPage() {
                   <h4 className="font-body-lg text-on-surface">Full Name</h4>
                   <p className="text-body-sm text-outline">Your display name across workspaces.</p>
                 </div>
-                <input type="text" defaultValue="Julian Rossi" className="bg-surface-container-low border border-white/10 rounded-xl px-4 py-2 text-on-surface w-64 focus:border-primary outline-none" />
+                <input 
+                  type="text" 
+                  value={name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  className="bg-surface-container-low border border-white/10 rounded-xl px-4 py-2 text-on-surface w-64 focus:border-primary outline-none transition-colors" 
+                />
               </div>
               <div className="flex justify-between items-center">
                 <div>
@@ -44,8 +88,7 @@ export default function SettingsPage() {
                   <p className="text-body-sm text-outline">Used for login and notifications.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-on-surface-variant">julian@peblo.ai</span>
-                  <button className="text-secondary text-sm font-medium hover:underline">Change</button>
+                  <span className="text-on-surface-variant">{session?.user?.email || ''}</span>
                 </div>
               </div>
               <div className="flex justify-between items-center">
@@ -108,7 +151,7 @@ export default function SettingsPage() {
                   <p className="text-body-sm text-outline">The LLM powering your insights.</p>
                 </div>
                 <span className="px-3 py-1 bg-surface-bright border border-white/10 rounded-full text-xs font-bold tracking-widest text-secondary uppercase">
-                  Anthropic Claude
+                  Groq AI
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -117,7 +160,7 @@ export default function SettingsPage() {
                   <p className="text-body-sm text-outline">Your current generation limits.</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium mb-1">47 / 200 generations</p>
+                  <p className="text-sm font-medium mb-1">Free tier</p>
                   <div className="w-48 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
                     <div className="w-1/4 h-full bg-primary rounded-full"></div>
                   </div>
@@ -129,11 +172,21 @@ export default function SettingsPage() {
         </div>
         
         {/* Floating Save Button */}
-        <div className="fixed bottom-12 right-12">
-          <button className="px-8 py-3 bg-primary text-on-primary font-bold tracking-wide rounded-full shadow-[0_0_30px_rgba(242,202,80,0.2)] hover:scale-105 transition-transform">
-            SAVE CHANGES
-          </button>
-        </div>
+        {isDirty && (
+          <div className="fixed bottom-12 right-12 animate-in fade-in slide-in-from-bottom-4">
+            <button 
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-8 py-3 bg-primary text-on-primary font-bold tracking-wide rounded-full shadow-[0_0_30px_rgba(242,202,80,0.2)] hover:scale-105 transition-transform disabled:opacity-70 flex items-center gap-2"
+            >
+              {isSaving ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
+              ) : (
+                <><Check className="w-4 h-4" /> SAVE CHANGES</>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

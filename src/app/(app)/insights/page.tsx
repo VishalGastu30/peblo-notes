@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Footer } from '@/components/layout/footer';
+import { TopBar } from '@/components/layout/top-bar';
 import { Search, Bell, History, FileText, Sparkles, Users, TrendingUp, ArrowRight, Wand2, ExternalLink, Lightbulb, Link as LinkIcon, CalendarDays, BarChart3, Loader2 } from 'lucide-react';
 import { motion, useInView, Variants } from 'framer-motion';
 import { useInsights } from '@/hooks/use-insights';
@@ -93,23 +94,12 @@ export default function InsightsPage() {
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-y-auto custom-scrollbar">
-      {/* TopNavBar Shell */}
-      <header className="flex justify-between items-center w-full px-margin-desktop h-16 z-40 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-white/5 docked full-width top-0 sticky">
-        <div className="flex items-center gap-8">
-          <h2 className="font-display-hero text-title-md text-primary">Workspace Insights</h2>
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="relative hidden lg:block">
-            <input className="bg-surface-container-low border-none rounded-full px-10 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary/40 placeholder:text-outline/50 text-on-surface outline-none transition-all" placeholder="Search insights..." type="text"/>
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-outline/50 w-4 h-4" />
-          </div>
-          <div className="flex items-center gap-4 text-on-surface-variant">
-            <Bell className="w-5 h-5 hover:text-primary cursor-pointer transition-colors" />
-            <History className="w-5 h-5 hover:text-primary cursor-pointer transition-colors" />
-            <button className="px-4 py-1.5 border border-secondary text-secondary font-medium rounded-full text-sm hover:bg-secondary/10 transition-all">Share</button>
-          </div>
-        </div>
-      </header>
+      <TopBar 
+        title="Workspace Insights"
+        actions={
+          <button className="px-4 py-1.5 border border-secondary text-secondary font-medium rounded-full text-sm hover:bg-secondary/10 transition-all">Share</button>
+        }
+      />
 
       {/* Dashboard Grid Content */}
       <div className="p-margin-desktop space-y-gutter flex-1">
@@ -173,9 +163,9 @@ export default function InsightsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="glass-card rounded-[28px] p-8 h-[400px] flex flex-col"
+          className="glass-card rounded-[28px] p-8 h-[400px] flex flex-col overflow-hidden"
         >
-          <div className="flex justify-between items-center mb-10">
+          <div className="flex justify-between items-center mb-10 shrink-0">
             <div>
               <h4 className="font-title-md text-title-md text-on-surface">Activity Trends</h4>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Cognitive output over the last 30 days</p>
@@ -184,14 +174,14 @@ export default function InsightsPage() {
               <span className="px-3 py-1 rounded-full bg-surface-variant text-label-caps text-primary cursor-pointer hover:bg-surface-variant/80 transition-colors">Daily</span>
             </div>
           </div>
-          <div className="flex-1 relative flex items-end gap-1">
+          <div className="flex-1 relative flex items-end gap-1 overflow-hidden min-w-0">
             {trendHeights.map((height: number, i: number) => (
               <motion.div 
                 key={i}
                 initial={{ height: "0%" }}
                 animate={{ height: `${height}%` }}
                 transition={{ duration: 0.8, delay: 0.4 + i * 0.02, type: "spring", bounce: 0.3 }}
-                className="flex-1 bg-gradient-to-t from-primary/30 to-primary/5 hover:from-primary/50 hover:to-primary/20 transition-colors rounded-t-lg relative group cursor-pointer"
+                className="flex-1 bg-gradient-to-t from-primary/30 to-primary/5 hover:from-primary/50 hover:to-primary/20 transition-colors rounded-t-lg relative group cursor-pointer min-w-0"
                 title={activityTrend[i].date}
               >
                 {/* Tooltip on hover */}
@@ -200,19 +190,6 @@ export default function InsightsPage() {
                 </div>
               </motion.div>
             ))}
-            
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 1000 100">
-              <motion.path 
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 0.8 }}
-                transition={{ duration: 1.5, delay: 1, ease: "easeInOut" }}
-                className="opacity-80" 
-                d="M0,80 Q100,20 200,60 T400,10 T600,70 T800,30 T1000,50" 
-                fill="none" 
-                stroke="#D4AF37" 
-                strokeWidth="2"
-              />
-            </svg>
           </div>
           <div className="flex justify-between mt-4 font-label-caps text-[10px] text-outline uppercase tracking-widest">
             <span>30 days ago</span>

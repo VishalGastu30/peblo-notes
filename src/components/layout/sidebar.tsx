@@ -2,18 +2,19 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
   Plus, FileText, Clock, Archive, Users, BarChart3, 
-  Settings, HelpCircle, User, ChevronLeft, ChevronRight, LogOut
+  Settings, HelpCircle, User, ChevronLeft, ChevronRight, LogOut, Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { signOut, useSession } from 'next-auth/react';
+import { useEditorStore } from '@/stores/editor-store';
+import { mutate } from 'swr';
 
 const navItems = [
   { href: '/workspace', icon: FileText, label: 'All Notes' },
-  { href: '/workspace?sort=recent', icon: Clock, label: 'Recent' },
   { href: '/archive', icon: Archive, label: 'Archived' },
   { href: '/shared', icon: Users, label: 'Shared' },
   { href: '/insights', icon: BarChart3, label: 'Insights' },
@@ -26,8 +27,32 @@ const bottomNavItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const { data: session } = useSession();
+  const { setActiveNote } = useEditorStore();
+
+  const handleCreateNote = async () => {
+    try {
+      setIsCreating(true);
+      const res = await fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) throw new Error('Failed to create note');
+      const { data } = await res.json();
+      // Invalidate notes list cache
+      mutate((key) => typeof key === 'string' && key.startsWith('/api/notes'));
+      setActiveNote(data.id);
+      router.push('/workspace');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   const isNavActive = (href: string) => {
     // For query-param links like /workspace?sort=recent, match the path part
@@ -68,12 +93,19 @@ export function Sidebar() {
       
       {/* New Note Button */}
       <div className="px-4 mb-6">
-        <button className={cn(
-          "w-full bg-primary font-semibold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-[0_0_15px_rgba(242,202,80,0.2)] overflow-hidden",
+        <button 
+          onClick={handleCreateNote}
+          disabled={isCreating}
+          className={cn(
+          "w-full bg-primary font-semibold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-[0_0_15px_rgba(242,202,80,0.2)] overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed",
           isCollapsed ? "py-3 rounded-xl" : "py-3.5 rounded-2xl text-sm"
         )}>
-          <Plus className="w-5 h-5 shrink-0 text-background" />
-          {!isCollapsed && <span className="text-background font-bold tracking-wide">New Note</span>}
+          {isCreating ? (
+            <Loader2 className="w-5 h-5 shrink-0 text-background animate-spin" />
+          ) : (
+            <Plus className="w-5 h-5 shrink-0 text-background" />
+          )}
+          {!isCollapsed && <span className="text-background font-bold tracking-wide">{isCreating ? 'Creating...' : 'New Note'}</span>}
         </button>
       </div>
       

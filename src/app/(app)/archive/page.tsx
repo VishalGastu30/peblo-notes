@@ -7,6 +7,7 @@ import { useNotes } from '@/hooks/use-notes';
 import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { SearchBar } from '@/components/notes/search-bar';
+import { TopBar } from '@/components/layout/top-bar';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -65,8 +66,10 @@ export default function ArchivePage() {
   };
 
   return (
-    <div className="grid grid-cols-12 h-full w-full">
-      {/* Left: Archive List */}
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-surface">
+      <TopBar title="Archived Notes" showSearch={false} />
+      <div className="grid grid-cols-12 flex-1 w-full overflow-hidden">
+        {/* Left: Archive List */}
       <section className="col-span-4 border-r border-white/5 bg-surface-container-lowest flex flex-col h-full">
         <div className="p-6 space-y-6 shrink-0">
           <div>
@@ -210,6 +213,7 @@ export default function ArchivePage() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </div>
   );
 }
