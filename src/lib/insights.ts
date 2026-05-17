@@ -1,5 +1,12 @@
 import { prisma } from "@/lib/prisma"
 
+export function buildWeeklySummary(notesThisWeek: number, trend: number): string {
+  let summary = `You've created ${notesThisWeek} notes this week`;
+  if (trend > 0) summary += `, a ${trend}% increase from last week.`;
+  else if (trend < 0) summary += `. You were slightly more active last week.`;
+  else summary += `, maintaining your pace from last week.`;
+  return summary;
+}
 export async function getUserInsights(userId: string) {
   const now = new Date()
   const thirtyDaysAgo = new Date(now)
@@ -140,10 +147,7 @@ export async function getUserInsights(userId: string) {
   }
 
   // Generate an AI-like summary string
-  let summary = `You've created ${notesThisWeek} notes this week`
-  if (trend > 0) summary += `, a ${trend}% increase from last week.`
-  else if (trend < 0) summary += `. You were slightly more active last week.`
-  else summary += `, maintaining your pace from last week.`
+  let summary = buildWeeklySummary(notesThisWeek, trend)
 
   // Process Activity Trend (fill missing days with 0)
   const activityTrend = []

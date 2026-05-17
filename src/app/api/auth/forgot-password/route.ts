@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendPasswordResetEmail } from '@/lib/email';
-import { nanoid } from 'nanoid';
+import { generatePasswordResetToken } from '@/lib/utils';
 
 export async function POST(req: Request) {
   try {
@@ -21,8 +21,7 @@ export async function POST(req: Request) {
     }
 
     // Generate token and expiry (1 hour)
-    const token = nanoid(32);
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+    const { token, expiresAt } = generatePasswordResetToken();
 
     // Save token
     await prisma.passwordReset.create({
