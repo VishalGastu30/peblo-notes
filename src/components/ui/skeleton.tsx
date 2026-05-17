@@ -1,19 +1,21 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-interface SkeletonProps {
+interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export function Skeleton({ className }: SkeletonProps) {
+export function Skeleton({ className, style, ...props }: SkeletonProps) {
   return (
     <div
+      style={style}
       className={cn(
         "animate-pulse rounded-lg bg-white/5 relative overflow-hidden",
         "after:absolute after:inset-0 after:translate-x-[-100%] after:animate-[shimmer_2s_infinite]",
         "after:bg-gradient-to-r after:from-transparent after:via-white/[0.03] after:to-transparent",
         className
       )}
+      {...props}
     />
   );
 }
