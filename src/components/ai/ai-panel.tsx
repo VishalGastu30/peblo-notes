@@ -1,19 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Sparkles, Info, CheckCircle2, Circle, RefreshCw, Copy, Loader2 } from 'lucide-react';
+import React from 'react';
+import { Sparkles, Info, CheckCircle2, Circle, RefreshCw, Copy, Loader2, Type } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { useAiAction } from '@/hooks/use-ai-action';
+import { useEditorStore } from '@/stores/editor-store';
+import { useNote } from '@/hooks/use-note';
 
 export function AIPanel() {
-  const [isGenerating, setIsGenerating] = useState(false);
+  const { activeNoteId } = useEditorStore();
+  const { updateNote } = useNote(activeNoteId);
+  const { state, result, error, generate, reset, copy } = useAiAction(activeNoteId);
 
-  // Simulated generation handler
-  const handleRegenerate = () => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
-    }, 2500);
-  };
+  const isGenerating = state === 'generating';
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -27,6 +26,18 @@ export function AIPanel() {
     hidden: { opacity: 0, x: 20 },
     show: { opacity: 1, x: 0, transition: { duration: 0.5, ease: "easeOut" } }
   };
+
+  if (!activeNoteId) {
+    return (
+      <section className="col-span-3 bg-surface-container-low border-l border-white/5 flex items-center justify-center h-full relative overflow-hidden">
+         <div className="text-center opacity-50 px-6">
+          <Sparkles className="w-8 h-8 text-outline mx-auto mb-4" />
+          <p className="font-title-md text-xl text-on-surface">AI Insights</p>
+          <p className="text-body-sm text-on-surface-variant mt-2">Select a note to generate AI insights.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="col-span-3 bg-surface-container-low border-l border-white/5 flex flex-col h-full relative overflow-hidden">
@@ -83,77 +94,136 @@ export function AIPanel() {
               animate="show"
               className="space-y-6"
             >
-              {/* Summary Block */}
-              <motion.div variants={itemVariants} className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-label-caps text-outline uppercase">Executive Summary</span>
-                  <Info className="w-4 h-4 text-outline" />
-                </div>
-                <div className="p-4 rounded-2xl bg-surface-variant/30 border border-white/5 text-body-sm text-on-surface-variant leading-relaxed shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.03)] transition-shadow">
-                  Proposes a 2024 strategy focusing on "Luxury Editorial" design combined with AI integration. Key themes include "Tactile Digitalism" and focus-driven UX using a dark-mode-first aesthetic to enhance long-form cognitive work.
-                </div>
-              </motion.div>
-              
-              {/* Action Items Block */}
-              <motion.div variants={itemVariants} className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-label-caps text-outline uppercase">Action Items</span>
-                  <CheckCircle2 className="w-4 h-4 text-outline" />
-                </div>
-                <div className="p-4 rounded-2xl bg-surface-variant/30 border border-white/5 space-y-3 shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.03)] transition-shadow">
-                  {[
-                    "Finalize visual token set for 'Tactile Digitalism' components.",
-                    "Prototype the 'Loom' 3D thought visualization engine.",
-                    "Schedule review for brand identity guidelines integration."
-                  ].map((item, idx) => (
-                    <motion.div 
-                      key={idx}
-                      whileHover={{ x: 4 }}
-                      className="flex gap-3 items-start group cursor-pointer"
+              {error && (
+                <motion.div variants={itemVariants} className="p-4 rounded-2xl bg-error/10 border border-error/20 text-error text-body-sm text-center">
+                  {error}
+                </motion.div>
+              )}
+
+              {state === 'idle' && !error && (
+                <motion.div variants={itemVariants} className="space-y-3">
+                  <p className="text-body-sm text-on-surface-variant text-center mb-6">What would you like to generate for this note?</p>
+                  <button 
+                    onClick={() => generate('summary')}
+                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-surface-variant/30 border border-white/5 hover:bg-surface-variant hover:border-white/10 transition-colors group"
+                  >
+                    <span className="text-body-sm font-medium text-on-surface">Executive Summary</span>
+                    <Info className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
+                  </button>
+                  <button 
+                    onClick={() => generate('actions')}
+                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-surface-variant/30 border border-white/5 hover:bg-surface-variant hover:border-white/10 transition-colors group"
+                  >
+                    <span className="text-body-sm font-medium text-on-surface">Extract Action Items</span>
+                    <CheckCircle2 className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
+                  </button>
+                  <button 
+                    onClick={() => generate('title')}
+                    className="w-full flex items-center justify-between p-4 rounded-2xl bg-surface-variant/30 border border-white/5 hover:bg-surface-variant hover:border-white/10 transition-colors group"
+                  >
+                    <span className="text-body-sm font-medium text-on-surface">Suggest Title</span>
+                    <Type className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
+                  </button>
+                </motion.div>
+              )}
+
+              {/* Results */}
+              {result?.summary && (
+                <motion.div variants={itemVariants} className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-label-caps text-outline uppercase">Executive Summary</span>
+                    <Info className="w-4 h-4 text-outline" />
+                  </div>
+                  <div className="p-4 rounded-2xl bg-surface-variant/30 border border-white/5 text-body-sm text-on-surface-variant leading-relaxed shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.03)] transition-shadow">
+                    {result.summary}
+                  </div>
+                  <div className="flex justify-end gap-2 mt-2">
+                    <button onClick={() => copy(result.summary!)} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Copy</button>
+                    <button onClick={() => generate('summary')} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Regenerate</button>
+                  </div>
+                </motion.div>
+              )}
+
+              {result?.actionItems && (
+                <motion.div variants={itemVariants} className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-label-caps text-outline uppercase">Action Items</span>
+                    <CheckCircle2 className="w-4 h-4 text-outline" />
+                  </div>
+                  <div className="p-4 rounded-2xl bg-surface-variant/30 border border-white/5 space-y-3 shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.03)] transition-shadow">
+                    {result.actionItems.length === 0 ? (
+                      <p className="text-body-sm text-on-surface-variant italic">No action items found.</p>
+                    ) : (
+                      result.actionItems.map((item, idx) => (
+                        <motion.div 
+                          key={idx}
+                          whileHover={{ x: 4 }}
+                          className="flex gap-3 items-start group cursor-pointer"
+                        >
+                          <Circle className="text-primary/50 w-4 h-4 mt-0.5 shrink-0 group-hover:text-primary transition-colors" />
+                          <span className="text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">{item}</span>
+                        </motion.div>
+                      ))
+                    )}
+                  </div>
+                  <div className="flex justify-end gap-2 mt-2">
+                    <button onClick={() => copy(result.actionItems!.join('\n'))} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Copy All</button>
+                    <button onClick={() => generate('actions')} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Regenerate</button>
+                  </div>
+                </motion.div>
+              )}
+
+              {result?.suggestedTitle && (
+                <motion.div variants={itemVariants} className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-label-caps text-outline uppercase">Suggested Title</span>
+                    <Type className="w-4 h-4 text-outline" />
+                  </div>
+                  <div className="p-4 rounded-2xl bg-surface-variant/30 border border-white/5 space-y-3 shadow-sm hover:shadow-[0_0_15px_rgba(255,255,255,0.03)] transition-shadow">
+                    <div 
+                      className="text-body-sm font-medium text-on-surface hover:text-primary cursor-pointer transition-colors"
+                      onClick={() => updateNote({ title: result.suggestedTitle })}
                     >
-                      <Circle className="text-primary/50 w-4 h-4 mt-0.5 shrink-0 group-hover:text-primary transition-colors" />
-                      <span className="text-body-sm text-on-surface-variant group-hover:text-on-surface transition-colors">{item}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-              
-              {/* AI Visual Insight */}
-              <motion.div variants={itemVariants} className="rounded-[28px] overflow-hidden border border-primary/20 relative group cursor-pointer">
-                <div className="w-full aspect-square bg-gradient-to-br from-primary/10 via-surface-container to-background flex items-center justify-center group-hover:from-primary/20 transition-colors duration-500">
-                  <span className="text-outline font-label-caps text-xs tracking-widest opacity-50 group-hover:opacity-100 transition-opacity">VISUALIZATION</span>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent opacity-80"></div>
-                <div className="absolute bottom-5 left-5 right-5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                  <p className="text-[10px] font-label-caps text-primary mb-1 uppercase tracking-widest">Visual Metaphor</p>
-                  <p className="text-[13px] text-on-surface font-medium leading-relaxed">Concept mapping of "Radiant Intelligence" flow within the workspace.</p>
-                </div>
-              </motion.div>
+                      {result.suggestedTitle}
+                    </div>
+                    {result.alternatives && result.alternatives.length > 0 && (
+                      <div className="pt-2 border-t border-white/5 space-y-2">
+                        <p className="text-[10px] text-outline font-label-caps uppercase tracking-widest">Alternatives</p>
+                        {result.alternatives.map((alt, idx) => (
+                          <div 
+                            key={idx} 
+                            className="text-body-sm text-on-surface-variant hover:text-primary cursor-pointer transition-colors"
+                            onClick={() => updateNote({ title: alt })}
+                          >
+                            {alt}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex justify-end gap-2 mt-2">
+                    <button onClick={() => generate('title')} className="text-[10px] font-label-caps text-outline hover:text-primary uppercase tracking-widest px-2 py-1">Regenerate</button>
+                  </div>
+                </motion.div>
+              )}
+
             </motion.div>
           )}
         </AnimatePresence>
       </div>
       
       {/* Footer Actions */}
-      <div className="p-6 mt-auto border-t border-white/5 bg-surface-container-high/50 relative z-10">
-        <div className="grid grid-cols-2 gap-3">
+      {state !== 'idle' && !isGenerating && (
+        <div className="p-6 mt-auto border-t border-white/5 bg-surface-container-high/50 relative z-10">
           <button 
-            onClick={handleRegenerate}
-            disabled={isGenerating}
-            className="flex items-center justify-center gap-2 py-3 bg-primary text-on-primary rounded-xl text-xs font-label-caps tracking-widest uppercase transition-all hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(242,202,80,0.15)]"
+            onClick={reset}
+            className="w-full flex items-center justify-center gap-2 py-3 border border-white/10 text-on-surface-variant rounded-xl text-xs font-label-caps tracking-widest uppercase transition-all hover:bg-white/5 active:scale-95"
           >
-            <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
-            Regenerate
-          </button>
-          <button 
-            disabled={isGenerating}
-            className="flex items-center justify-center gap-2 py-3 border border-primary/30 text-primary rounded-xl text-xs font-label-caps tracking-widest uppercase transition-all hover:bg-primary/10 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Copy className="w-4 h-4" />
-            Copy
+            Clear Results
           </button>
         </div>
-      </div>
+      )}
     </section>
   );
 }
+
