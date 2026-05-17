@@ -30,10 +30,10 @@ export default function SharedPage() {
   const sharedNotes = notes?.filter((n: any) => n.isPublic) || [];
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-y-auto custom-scrollbar">
+    <div className="flex-1 flex flex-col h-full overflow-y-auto custom-scrollbar pb-20 md:pb-0">
       <TopBar title="Shared Notes" />
 
-      <div className="p-margin-desktop flex-1">
+      <div className="px-4 md:p-margin-desktop flex-1 py-6 md:py-0">
         <motion.div
           variants={containerVariants}
           initial="hidden"

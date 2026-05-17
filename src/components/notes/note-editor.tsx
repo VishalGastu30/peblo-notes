@@ -144,9 +144,9 @@ export function NoteEditor() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="h-16 flex items-center justify-between px-6 border-b border-white/5 relative z-10 bg-surface/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
+        className="h-14 md:h-16 flex items-center justify-between px-3 md:px-6 border-b border-white/5 relative z-10 bg-surface/80 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
       >
-        <div className="flex items-center gap-1 flex-wrap bg-surface-container-low p-1 rounded-xl border border-white/5">
+        <div className="flex items-center gap-1 bg-surface-container-low p-1 rounded-xl border border-white/5 overflow-x-auto no-scrollbar">
           {/* Text Formatting */}
           <ToolbarButton onClick={() => editor?.chain().focus().toggleBold().run()} isActive={editor?.isActive('bold')} title="Bold (Ctrl+B)">
             <Bold className="w-4 h-4" />
@@ -205,7 +205,7 @@ export function NoteEditor() {
           </ToolbarButton>
         </div>
 
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center gap-2 md:gap-4 shrink-0 ml-2">
           <AutosaveIndicator status={autosaveStatus as any} />
           <div className="flex items-center gap-2">
             <ShareDialog 
@@ -214,11 +214,11 @@ export function NoteEditor() {
               shareId={note?.shareId || null}
               trigger={
                 <button className={cn(
-                  "px-4 py-1.5 text-body-sm font-medium border border-white/10 rounded-full hover:bg-white/5 transition-colors flex items-center gap-2 group",
+                  "px-3 md:px-4 py-1.5 text-body-sm font-medium border border-white/10 rounded-full hover:bg-white/5 transition-colors flex items-center gap-2 group",
                   note?.isPublic && "border-tertiary/30 text-tertiary bg-tertiary/10 hover:bg-tertiary/20"
                 )}>
                   <Share2 className={cn("w-3.5 h-3.5 transition-colors", note?.isPublic ? "text-tertiary" : "text-outline group-hover:text-on-surface")} />
-                  {note?.isPublic ? 'Shared' : 'Share'}
+                  <span className="hidden sm:inline">{note?.isPublic ? 'Shared' : 'Share'}</span>
                 </button>
               }
             />
@@ -227,7 +227,7 @@ export function NoteEditor() {
       </motion.div>
       
       {/* Editor Canvas */}
-      <div className="flex-1 overflow-y-auto px-16 py-12 custom-scrollbar relative z-10 flex flex-col">
+      <div className="flex-1 overflow-y-auto px-4 py-6 md:px-16 md:py-12 custom-scrollbar relative z-10 flex flex-col">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

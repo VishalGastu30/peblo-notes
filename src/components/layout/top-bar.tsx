@@ -12,7 +12,7 @@ interface TopBarProps {
 
 export function TopBar({ title, showSearch = true, actions }: TopBarProps) {
   return (
-    <header className="flex justify-between items-center w-full px-margin-desktop h-16 z-40 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-white/5 sticky top-0">
+    <header className="flex justify-between items-center w-full px-4 md:px-margin-desktop h-16 z-40 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-white/5 sticky top-0">
       <div className="flex items-center gap-8">
         <h2 className="font-display-hero text-title-md text-primary">{title}</h2>
       </div>

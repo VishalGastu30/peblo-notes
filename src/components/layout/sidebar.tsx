@@ -68,7 +68,7 @@ export function Sidebar() {
       initial={false}
       animate={{ width: isCollapsed ? 80 : 256 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="h-screen left-0 top-0 bg-surface-container-low/80 backdrop-blur-xl border-r border-white/[0.06] flex flex-col py-6 z-50 relative"
+      className="h-screen left-0 top-0 bg-surface-container-low/80 backdrop-blur-xl border-r border-white/[0.06] flex-col py-6 z-50 relative hidden md:flex"
     >
       <button 
         onClick={() => setIsCollapsed(!isCollapsed)}

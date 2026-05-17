@@ -94,7 +94,7 @@ export default function InsightsPage() {
   const trendHeights = activityTrend.map((d: any) => Math.max(5, Math.round(((d.notesEdited + d.aiActions) / maxActions) * 100)));
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-y-auto custom-scrollbar">
+    <div className="flex-1 flex flex-col h-full overflow-y-auto custom-scrollbar pb-20 md:pb-0">
       <TopBar 
         title="Workspace Insights"
         actions={
@@ -103,7 +103,7 @@ export default function InsightsPage() {
       />
 
       {/* Dashboard Grid Content */}
-      <div className="p-margin-desktop space-y-gutter flex-1">
+      <div className="px-4 md:p-margin-desktop space-y-gutter flex-1">
         {/* Top Row: Stat Cards */}
         <motion.section 
           variants={containerVariants}
@@ -164,7 +164,7 @@ export default function InsightsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="glass-card rounded-[28px] p-8 h-[400px] flex flex-col overflow-hidden relative"
+          className="glass-card rounded-[28px] p-4 md:p-8 h-[280px] md:h-[400px] flex flex-col overflow-hidden relative"
         >
           <div className="flex justify-between items-center mb-10 shrink-0 relative z-10">
             <div>
@@ -275,7 +275,7 @@ export default function InsightsPage() {
               <p className="font-body-lg text-on-surface-variant leading-relaxed">
                 {weeklyActivity.summary}
               </p>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-4 bg-surface-container-low rounded-xl border border-white/5 space-y-2">
                   <div className="text-outline text-body-sm">Notes Created</div>
                   <div className="text-on-surface font-headline-sm"><CountingNumber value={weeklyActivity.notesThisWeek} /></div>

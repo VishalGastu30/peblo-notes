@@ -66,11 +66,11 @@ export default function ArchivePage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-surface">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-surface pb-20 md:pb-0">
       <TopBar title="Archived Notes" showSearch={false} />
-      <div className="grid grid-cols-12 flex-1 w-full overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-12 flex-1 w-full overflow-hidden">
         {/* Left: Archive List */}
-      <section className="col-span-4 border-r border-white/5 bg-surface-container-lowest flex flex-col h-full">
+      <section className="col-span-1 md:col-span-4 md:border-r border-white/5 bg-surface-container-lowest flex flex-col h-full">
         <div className="p-6 space-y-6 shrink-0">
           <div>
             <h2 className="font-display-hero text-[32px] text-on-surface flex items-center gap-3">
@@ -158,7 +158,7 @@ export default function ArchivePage() {
       </section>
 
       {/* Right: Empty State */}
-      <section className="col-span-8 bg-surface flex flex-col h-full items-center justify-center p-12 text-center">
+      <section className="hidden md:flex col-span-8 bg-surface flex-col h-full items-center justify-center p-12 text-center">
         <div className="w-32 h-32 mb-8 rounded-full border border-primary/20 flex items-center justify-center bg-primary/5 shadow-[0_0_40px_rgba(242,202,80,0.05)]">
           <PackageOpen className="w-16 h-16 text-primary/40" />
         </div>

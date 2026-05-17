@@ -47,10 +47,10 @@ export default function SettingsPage() {
   return (
     <div className="flex-1 overflow-y-auto custom-scrollbar h-full w-full bg-surface">
       <TopBar title="Settings" showSearch={false} />
-      <div className="max-w-4xl mx-auto p-12">
+      <div className="max-w-4xl mx-auto px-4 py-6 md:p-12 pb-24 md:pb-12">
         
         {/* User Profile Card */}
-        <div className="glass-card bg-surface-container-low border border-white/5 rounded-[28px] p-8 mb-12 flex items-center justify-between">
+        <div className="glass-card bg-surface-container-low border border-white/5 rounded-[28px] p-6 md:p-8 mb-8 md:mb-12 flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 rounded-full border-2 border-secondary/30 bg-surface-variant flex items-center justify-center shadow-[0_0_20px_rgba(221,184,255,0.15)] overflow-hidden">
               {session?.user?.image ? (
@@ -73,8 +73,8 @@ export default function SettingsPage() {
               <User className="w-5 h-5" />
               Account
             </h3>
-            <div className="glass-card bg-surface-container-lowest border border-white/5 rounded-[24px] p-8 space-y-8">
-              <div className="flex justify-between items-center">
+            <div className="glass-card bg-surface-container-lowest border border-white/5 rounded-[24px] p-5 md:p-8 space-y-6 md:space-y-8">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                 <div>
                   <h4 className="font-body-lg text-on-surface">Full Name</h4>
                   <p className="text-body-sm text-outline">Your display name across workspaces.</p>
@@ -83,31 +83,31 @@ export default function SettingsPage() {
                   type="text" 
                   value={name}
                   onChange={(e) => handleNameChange(e.target.value)}
-                  className="bg-surface-container-low border border-white/10 rounded-xl px-4 py-2 text-on-surface w-64 focus:border-primary outline-none transition-colors" 
+                  className="bg-surface-container-low border border-white/10 rounded-xl px-4 py-2 text-on-surface w-full sm:w-64 focus:border-primary outline-none transition-colors" 
                 />
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                 <div>
                   <h4 className="font-body-lg text-on-surface">Email Address</h4>
                   <p className="text-body-sm text-outline">Used for login and notifications.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-on-surface-variant">{session?.user?.email || ''}</span>
+                  <span className="text-on-surface-variant text-sm break-all">{session?.user?.email || ''}</span>
                 </div>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                 <div>
                   <h4 className="font-body-lg text-on-surface">Change Password</h4>
                   <p className="text-body-sm text-outline">Ensure your account stays secure.</p>
                 </div>
                 <button 
                   onClick={() => toast({ title: 'Password reset link sent to your email.' })}
-                  className="px-4 py-1.5 border border-white/10 rounded-lg hover:bg-white/5 transition-colors text-sm font-medium"
+                  className="px-4 py-1.5 border border-white/10 rounded-lg hover:bg-white/5 transition-colors text-sm font-medium w-full sm:w-auto"
                 >
                   Update
                 </button>
               </div>
-              <div className="pt-4 border-t border-error/10 flex justify-between items-center">
+              <div className="pt-4 border-t border-error/10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                 <div>
                   <h4 className="font-body-lg text-error">Delete Account</h4>
                   <p className="text-body-sm text-error/70">Permanently remove your account and all data.</p>
@@ -227,7 +227,7 @@ export default function SettingsPage() {
         
         {/* Floating Save Button */}
         {isDirty && (
-          <div className="fixed bottom-12 right-12 animate-in fade-in slide-in-from-bottom-4">
+          <div className="fixed bottom-24 md:bottom-12 right-6 md:right-12 animate-in fade-in slide-in-from-bottom-4 z-50">
             <button 
               onClick={handleSave}
               disabled={isSaving}
