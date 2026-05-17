@@ -45,3 +45,11 @@ ui-ux-pro-max-skill/
 stitch_peblo_notes_premium_workspace/
 ui-ux-pro-max-skill/
 design-system/
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
