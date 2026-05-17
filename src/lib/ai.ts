@@ -4,7 +4,7 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-const MODEL = "llama3-70b-8192";
+const MODEL = "llama-3.3-70b-versatile";
 const MAX_TOKENS = 1024;
 
 const SYSTEM_PROMPT = `You are a precise, intelligent writing assistant embedded in Peblo Notes — 

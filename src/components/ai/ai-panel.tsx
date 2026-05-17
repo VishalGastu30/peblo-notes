@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Sparkles, Info, CheckCircle2, Circle, RefreshCw, Copy, Loader2, Type } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { useAiAction } from '@/hooks/use-ai-action';
@@ -14,6 +14,11 @@ export function AIPanel() {
   const { activeNoteId } = useEditorStore();
   const { updateNote } = useNote(activeNoteId);
   const { state, result, error, generate, reset, copy } = useAiAction(activeNoteId);
+
+  // Reset AI panel state when switching between notes
+  useEffect(() => {
+    reset();
+  }, [activeNoteId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isGenerating = state === 'generating';
 
@@ -32,7 +37,7 @@ export function AIPanel() {
 
   if (!activeNoteId) {
     return (
-      <section className="col-span-3 bg-surface-container-low border-l border-white/5 flex items-center justify-center h-full relative overflow-hidden">
+      <section className="bg-surface-container-low flex items-center justify-center h-full relative overflow-hidden w-full">
          <div className="text-center opacity-50 px-6">
           <Sparkles className="w-8 h-8 text-outline mx-auto mb-4" />
           <p className="font-title-md text-xl text-on-surface">AI Insights</p>
@@ -43,7 +48,7 @@ export function AIPanel() {
   }
 
   return (
-    <section className="col-span-3 bg-surface-container-low border-l border-white/5 flex flex-col h-full relative overflow-hidden">
+    <section className="bg-surface-container-low flex flex-col h-full relative overflow-hidden w-full">
       {/* Active Generating Glow */}
       <AnimatePresence>
         {isGenerating && (

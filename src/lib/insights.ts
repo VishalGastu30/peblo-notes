@@ -127,7 +127,7 @@ export async function getUserInsights(userId: string) {
   // Process Weekly Activity
   const notesThisWeek = dailyActivityLast7Days.reduce((sum, d) => sum + d.notesCreated, 0)
   const notesPrevWeek = dailyActivityPrev7Days.reduce((sum, d) => sum + d.notesCreated, 0)
-  const trend = notesPrevWeek === 0 ? 100 : Math.round(((notesThisWeek - notesPrevWeek) / notesPrevWeek) * 100)
+  const trend = (notesPrevWeek === 0 && notesThisWeek === 0) ? 0 : notesPrevWeek === 0 ? 100 : Math.round(((notesThisWeek - notesPrevWeek) / notesPrevWeek) * 100)
   
   const aiActionsThisWeek = dailyActivityLast7Days.reduce((sum, d) => sum + d.aiActions, 0)
   
