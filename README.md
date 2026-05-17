@@ -1,78 +1,90 @@
-# Peblo Notes
+# Peblo Notes - Full Stack Developer Challenge
 
-Peblo Notes is a premium, AI-powered workspace designed for focused writing and seamless productivity. Built with Next.js 15, Prisma, and Groq's fast Llama-3 models, it offers real-time editing, intelligent summarization, and task extraction.
+Welcome to Peblo Notes, a modern, lightweight, collaborative, and AI-powered notes workspace built for the Peblo Full Stack Developer Challenge!
 
-## Features
+## 🚀 Overview
 
-- **Notes Workspace**: distraction-free editor with block-style formatting.
-- **AI Intelligence**: Summarize notes, extract action items, and generate titles instantly via Groq API.
-- **Productivity Insights**: Visualize your writing habits with data-driven dashboards.
-- **Optimized Performance**: Next.js App Router, SSR, and ISR.
-- **Premium UX**: Framer Motion transitions, responsive design, and glassmorphism UI.
+Peblo Notes is a comprehensive full-stack application built to deliver an exceptional note-taking experience. The platform combines a sleek, modern "Liquid Glass" user interface with robust backend architecture and intelligent AI features. 
 
-## Tech Stack
+This repository contains the complete full-stack codebase. It is built as a unified Next.js 16 (App Router) application that effortlessly scales to handle both frontend capabilities and backend APIs.
 
-- **Framework**: Next.js 15 (App Router, React 19)
-- **Database**: PostgreSQL with Prisma ORM
-- **Auth**: NextAuth.js (Google OAuth & Credentials)
-- **AI**: Groq API (llama3-70b-8192)
-- **Styling**: Tailwind CSS & Framer Motion
-- **Editor**: Tiptap
-- **Testing**: Vitest & Playwright
+### 🎯 Key Requirements Achieved
 
-## Getting Started
+1. **Authentication**: Secure user authentication featuring Google OAuth and credential login via NextAuth.js.
+2. **Notes Workspace**: Rich text editor with auto-save, tagging system, categories, and archive capabilities.
+3. **AI Integration**: Powered by Groq AI, delivering lightning-fast note summaries, action item extraction, and intelligent title suggestions.
+4. **Search & Filtering**: Instantly discover notes through keyword search, tag filtering, and sorting capabilities.
+5. **Public Share Page**: Generate public, read-only links to share notes without requiring the viewer to log in.
+6. **Productivity Insights**: A comprehensive dashboard showing total notes, recent activity, top tags, and a weekly activity trend chart.
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repo>
-   cd Peblo_Notes
-   ```
+### ⭐ Extra Accomplishments (The "Nice to Haves")
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+- **Modern "Liquid Glass" UI**: A premium design system using TailwindCSS, Framer Motion, and Radix UI primitives.
+- **Rich Text Editing**: Integrated Tiptap for a polished and robust Markdown-like editing experience.
+- **Optimistic UI Updates**: Highly responsive interface that updates immediately upon interaction.
+- **Serverless Database**: PostgreSQL database powered by Neon, managed via Prisma ORM for seamless type safety and scalability.
+- **Dark Mode**: Thoughtful support for light and dark themes.
 
-3. **Set up environment variables:**
-   Copy `.env.example` to `.env` and fill in the required keys.
-   ```bash
-   cp .env.example .env
-   ```
+---
 
-4. **Initialize the database:**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
+## 📖 User Guide
 
-5. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+### 1. Prerequisites
+- Node.js (v20+)
+- PostgreSQL Database (e.g., Neon or local)
+- API Keys for Google OAuth, Resend, and Groq AI.
 
-Open [http://localhost:3000](http://localhost:3000) to view the app.
+### 2. Installation
+Clone the repository and install the dependencies:
+```bash
+git clone <your-repo-url>
+cd Peblo_Notes
+npm install
+```
 
-## Production Deployment (Vercel)
+### 3. Environment Variables
+Create a `.env` file in the root directory and use the `.env.example` format (or the provided env) to configure your secrets. Never commit your `.env` to version control.
+```env
+DATABASE_URL="your-neon-postgres-connection-string"
+NEXTAUTH_SECRET="your-nextauth-secret"
+NEXTAUTH_URL="http://localhost:3000"
+GOOGLE_CLIENT_ID="your-google-oauth-client-id"
+GOOGLE_CLIENT_SECRET="your-google-oauth-client-secret"
+GROQ_API_KEY="your-groq-api-key"
+RESEND_API_KEY="your-resend-api-key"
+```
 
-The app is optimized for serverless deployments on Vercel.
+### 4. Database Setup
+Push the Prisma schema to your configured database:
+```bash
+npx prisma db push
+```
 
-1. Create a new PostgreSQL database (e.g., Supabase) and update `DATABASE_URL` with connection pooling enabled (`?pgbouncer=true&connection_limit=10`).
-2. Push the code to a Git repository linked to Vercel.
-3. Configure the following Environment Variables in Vercel:
-   - `DATABASE_URL`
-   - `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
-   - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-   - `GROQ_API_KEY`
-   - `RESEND_API_KEY`
-4. The `vercel.json` provides max-duration settings for AI routes to ensure timeouts don't occur.
+### 5. Running the Application
+Start the development server:
+```bash
+npm run dev
+```
+Navigate to `http://localhost:3000` to experience Peblo Notes!
 
-## Architecture
+---
 
-- `src/app`: Next.js App Router structure. Marketing, Auth, and App domains are segmented.
-- `src/components`: UI components organized by domain (`auth`, `notes`, `insights`, `ui`).
-- `src/lib`: Core utility functions, AI wrapper, and database configurations.
-- `src/hooks`: Custom React hooks for optimistic updates, shortcuts, and insights processing.
+## 🛠️ Technology Stack
 
-## License
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: TailwindCSS & shadcn/ui
+- **Database**: PostgreSQL (Neon) & Prisma ORM
+- **Authentication**: NextAuth.js
+- **AI Provider**: Groq SDK
+- **Animations**: Framer Motion
 
-MIT License.
+---
+
+## ☁️ Deployment Notes
+
+Since this is a unified Next.js application, both the frontend and backend are deployed together. There is no need for a separate backend deployment on platforms like Render. The entire application (UI + API routes) is deployed seamlessly on **Vercel**.
+
+---
+
+*Done with love by G.Vishal FullStack AI & Mobile Developer*
