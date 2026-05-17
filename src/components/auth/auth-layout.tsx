@@ -57,7 +57,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="relative z-10 max-w-lg w-full"
+          className="relative z-10 max-w-lg w-full flex flex-col md:block items-center text-center md:text-left"
         >
           {/* Brand badge */}
           <motion.div variants={itemVariants} className="mb-5">
@@ -71,16 +71,17 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
 
           <motion.h1 
             variants={itemVariants}
-            className="font-display-hero text-3xl md:text-5xl text-primary mb-3 leading-[1.1]"
+            className="font-display-hero text-2xl md:text-5xl text-primary mb-2 md:mb-3 leading-[1.1]"
           >
             Think deeper.
-            <br />
+            <span className="hidden md:inline"><br /></span>
+            <span className="md:hidden"> </span>
             <span className="text-on-surface">Write better.</span>
           </motion.h1>
 
           <motion.p 
             variants={itemVariants}
-            className="text-on-surface-variant text-sm md:text-lg leading-relaxed max-w-sm mb-6 md:mb-10"
+            className="text-on-surface-variant text-sm md:text-lg leading-relaxed max-w-sm mb-2 md:mb-10"
           >
             The intellectual sanctuary for your digital consciousness.
           </motion.p>
@@ -104,8 +105,8 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         </motion.div>
       </section>
 
-      {/* Right Form Panel — scrollable so buttons never get cut off */}
-      <section className="w-full md:w-7/12 lg:w-1/2 flex items-start md:items-center justify-center bg-surface flex-1 overflow-y-auto">
+      {/* Right Form Panel — native page scrolling on mobile, scrollable panel on desktop */}
+      <section className="w-full md:w-7/12 lg:w-1/2 flex items-start md:items-center justify-center bg-surface md:flex-1 md:overflow-y-auto pb-12 md:pb-0">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
