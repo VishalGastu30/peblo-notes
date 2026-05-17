@@ -30,3 +30,47 @@ body {
     transform: translateX(100%);
   }
 }
+
+/* TipTap Editor Styles */
+
+/* The editor body wrapper: flex column that fills remaining height */
+.editor-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  cursor: text;
+}
+
+/* EditorContent renders one root div — make it fill the body too */
+.editor-body > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ProseMirror itself - fills all space (also set via editorProps inline style) */
+.ProseMirror {
+  flex: 1;
+  outline: none;
+  cursor: text;
+}
+
+.tiptap p {
+  margin: 0 0 0.75rem 0;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: rgba(255, 255, 255, 0.25);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* react-resizable-panels: give separator a hover glow */
+[data-separator]:hover {
+  background: rgba(255, 193, 7, 0.25) !important;
+  transition: background 0.2s ease;
+}
+
+

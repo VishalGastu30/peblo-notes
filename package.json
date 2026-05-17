@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--max-old-space-size=512' next dev --webpack",
-    "build": "NODE_OPTIONS='--max-old-space-size=1024' next build",
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev --webpack",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -45,6 +45,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.75.0",
+    "react-resizable-panels": "^4.11.1",
     "recharts": "^3.8.1",
     "resend": "^6.12.3",
     "swr": "^2.4.1",

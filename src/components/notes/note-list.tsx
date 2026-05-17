@@ -5,6 +5,7 @@ import { Search, X, ArrowUpDown, SearchX, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useNotes } from '@/hooks/use-notes';
+import { useTags } from '@/hooks/use-tags';
 import { useEditorStore } from '@/stores/editor-store';
 import { formatDistanceToNow } from 'date-fns';
 import { NoteCard } from './note-card';
@@ -28,6 +29,8 @@ export function NoteList() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [sort, setSort] = useState<'updated' | 'created' | 'title'>('updated');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
   // Custom debounced search query
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
@@ -40,14 +43,17 @@ export function NoteList() {
 
   const { notes, isLoading, hasMore, loadMore } = useNotes({
     search: debouncedSearchQuery,
+    tags: selectedTags,
     archived: false,
-    sort: 'updated'
+    sort
   });
+  
+  const { tags } = useTags();
 
   const { activeNoteId, setActiveNote } = useEditorStore();
 
   return (
-    <section className="col-span-3 border-r border-white/5 bg-surface-container-lowest flex flex-col h-full z-10 relative">
+    <section className="bg-surface-container-lowest flex flex-col h-full overflow-hidden relative">
       <div className="p-6 space-y-6 shrink-0">
         <SearchBar 
           value={searchQuery}
@@ -89,14 +95,59 @@ export function NoteList() {
               exit={{ opacity: 0 }}
               className="flex flex-wrap gap-2"
             >
-              <span className="px-3 py-1.5 bg-primary text-on-primary rounded-full text-[10px] font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(242,202,80,0.3)]">All</span>
+              <button 
+                onClick={() => setSelectedTags([])}
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all",
+                  selectedTags.length === 0 
+                    ? "bg-primary text-on-primary shadow-[0_0_15px_rgba(242,202,80,0.3)]"
+                    : "bg-surface-variant text-outline hover:text-on-surface"
+                )}
+              >
+                All
+              </button>
+              
+              {tags.map((tag) => {
+                const isSelected = selectedTags.includes(tag.id);
+                return (
+                  <button
+                    key={tag.id}
+                    onClick={() => {
+                      if (isSelected) {
+                        setSelectedTags(selectedTags.filter(id => id !== tag.id));
+                      } else {
+                        setSelectedTags([...selectedTags, tag.id]);
+                      }
+                    }}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all flex items-center gap-1",
+                      isSelected
+                        ? "bg-primary text-on-primary shadow-[0_0_15px_rgba(242,202,80,0.3)]"
+                        : "bg-surface-variant text-outline hover:text-on-surface"
+                    )}
+                  >
+                    {tag.name}
+                    {isSelected && <X className="w-3 h-3" />}
+                  </button>
+                );
+              })}
             </motion.div>
           )}
         </AnimatePresence>
         
-        <div className="flex items-center justify-between pt-2">
-          <span className="text-label-caps text-outline">Sorted by Date</span>
-          <ArrowUpDown className="w-4 h-4 text-outline cursor-pointer hover:text-primary transition-colors" />
+        <div className="flex items-center gap-2 pt-2 border-t border-white/5 mt-2">
+          <div className="relative flex items-center group cursor-pointer bg-surface-variant/30 hover:bg-surface-variant/50 px-3 py-1.5 rounded-lg transition-colors border border-white/5 w-full">
+            <select 
+              value={sort}
+              onChange={(e) => setSort(e.target.value as any)}
+              className="text-[10px] font-bold uppercase tracking-wider text-outline group-hover:text-on-surface bg-transparent border-none focus:ring-0 cursor-pointer appearance-none pl-0 py-1 z-10 w-full outline-none"
+            >
+              <option value="updated" className="bg-surface-container text-on-surface">Sorted by Date</option>
+              <option value="created" className="bg-surface-container text-on-surface">Created Date</option>
+              <option value="title" className="bg-surface-container text-on-surface">Alphabetical</option>
+            </select>
+            <ArrowUpDown className="w-3.5 h-3.5 text-outline group-hover:text-on-surface transition-colors absolute right-3 pointer-events-none" />
+          </div>
         </div>
       </div>
 
