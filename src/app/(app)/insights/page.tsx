@@ -163,35 +163,89 @@ export default function InsightsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="glass-card rounded-[28px] p-8 h-[400px] flex flex-col overflow-hidden"
+          className="glass-card rounded-[28px] p-8 h-[400px] flex flex-col overflow-hidden relative"
         >
-          <div className="flex justify-between items-center mb-10 shrink-0">
+          <div className="flex justify-between items-center mb-10 shrink-0 relative z-10">
             <div>
               <h4 className="font-title-md text-title-md text-on-surface">Activity Trends</h4>
               <p className="font-body-sm text-body-sm text-on-surface-variant">Cognitive output over the last 30 days</p>
             </div>
             <div className="flex gap-2">
-              <span className="px-3 py-1 rounded-full bg-surface-variant text-label-caps text-primary cursor-pointer hover:bg-surface-variant/80 transition-colors">Daily</span>
+              <span className="px-3 py-1 rounded-full bg-surface-variant text-label-caps text-primary cursor-default">Daily</span>
             </div>
           </div>
-          <div className="flex-1 relative flex items-end gap-1 overflow-hidden min-w-0">
-            {trendHeights.map((height: number, i: number) => (
-              <motion.div 
-                key={i}
-                initial={{ height: "0%" }}
-                animate={{ height: `${height}%` }}
-                transition={{ duration: 0.8, delay: 0.4 + i * 0.02, type: "spring", bounce: 0.3 }}
-                className="flex-1 bg-gradient-to-t from-primary/30 to-primary/5 hover:from-primary/50 hover:to-primary/20 transition-colors rounded-t-lg relative group cursor-pointer min-w-0"
-                title={activityTrend[i].date}
-              >
-                {/* Tooltip on hover */}
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-white/10 text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-                  {activityTrend[i].notesEdited + activityTrend[i].aiActions} actions
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="flex justify-between mt-4 font-label-caps text-[10px] text-outline uppercase tracking-widest">
+          
+          {maxActions === 1 && activityTrend.every((d: any) => d.notesEdited + d.aiActions === 0) ? (
+            <div className="flex-1 flex items-center justify-center text-on-surface-variant italic text-body-sm">
+              No activity recorded in the last 30 days.
+            </div>
+          ) : (
+            <div className="flex-1 relative min-w-0 w-full h-full">
+              <svg className="w-full h-full overflow-visible" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="line-gradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.4" />
+                    <stop offset="100%" stopColor="var(--primary)" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                
+                {/* SVG Paths */}
+                <path 
+                  d={`M 0,100 ${trendHeights.map((h: number, i: number) => `L ${(i / (trendHeights.length - 1)) * 100},${100 - h}`).join(' ')} L 100,100 Z`}
+                  fill="url(#line-gradient)"
+                  className="animate-in fade-in duration-1000"
+                  vectorEffect="non-scaling-stroke"
+                />
+                
+                <polyline 
+                  points={trendHeights.map((h: number, i: number) => `${(i / (trendHeights.length - 1)) * 100},${100 - h}`).join(' ')}
+                  fill="none"
+                  stroke="var(--primary)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="animate-in slide-in-from-left-full duration-1000"
+                  vectorEffect="non-scaling-stroke"
+                />
+
+                {/* Interactive Points */}
+                {trendHeights.map((h: number, i: number) => (
+                  <g key={i} className="group cursor-pointer">
+                    <circle 
+                      cx={`${(i / (trendHeights.length - 1)) * 100}%`} 
+                      cy={`${100 - h}%`} 
+                      r="4" 
+                      fill="var(--surface)"
+                      stroke="var(--primary)"
+                      strokeWidth="2"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    />
+                    {/* Invisible larger hit area for easier hover */}
+                    <circle 
+                      cx={`${(i / (trendHeights.length - 1)) * 100}%`} 
+                      cy={`${100 - h}%`} 
+                      r="12" 
+                      fill="transparent"
+                    />
+                  </g>
+                ))}
+              </svg>
+
+              {/* Tooltips Overlay */}
+              <div className="absolute inset-0 flex justify-between pointer-events-none">
+                {trendHeights.map((h: number, i: number) => (
+                  <div key={i} className="flex-1 relative group pointer-events-auto">
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 -translate-y-2 bg-surface-container-high border border-white/10 text-on-surface text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
+                      <div className="font-bold text-primary mb-0.5">{activityTrend[i].date}</div>
+                      {activityTrend[i].notesEdited + activityTrend[i].aiActions} total actions
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          <div className="flex justify-between mt-4 font-label-caps text-[10px] text-outline uppercase tracking-widest shrink-0">
             <span>30 days ago</span>
             <span>15 days ago</span>
             <span>Today</span>

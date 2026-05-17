@@ -154,12 +154,17 @@ export async function getUserInsights(userId: string) {
   for (let i = 29; i >= 0; i--) {
     const d = new Date(now)
     d.setDate(d.getDate() - i)
-    d.setHours(0, 0, 0, 0)
+    // Format to YYYY-MM-DD for local timezone
+    const dateStr = d.toLocaleDateString('en-CA'); // 'en-CA' gives YYYY-MM-DD format
     
-    const record = dailyActivityLast30Days.find(r => new Date(r.date).getTime() === d.getTime())
+    // Find record matching the YYYY-MM-DD date
+    const record = dailyActivityLast30Days.find(r => {
+      const rDateStr = new Date(r.date).toISOString().split('T')[0];
+      return rDateStr === dateStr;
+    });
     
     activityTrend.push({
-      date: d.toISOString().split('T')[0],
+      date: dateStr,
       notesCreated: record?.notesCreated || 0,
       notesEdited: record?.notesEdited || 0,
       aiActions: record?.aiActions || 0

@@ -61,23 +61,31 @@ export function useNote(noteId: string | null) {
 
     setAutosaveStatus('saving')
     
+    // We use a promise here to allow synchronous flushing via sendBeacon if needed
     fetch(`/api/notes/${noteId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(changes),
     })
-    .then(res => {
+    .then(async res => {
       if (!res.ok) throw new Error('Save failed')
       setAutosaveStatus('saved')
       setPendingChanges(false)
-      // We don't necessarily want to mutate() immediately if the user is typing,
-      // as it might cause editor cursor jumps depending on TipTap implementation,
-      // but if handled properly it's fine.
+      
+      // Mutate the SWR cache optimistically so if the user refreshes or navigates,
+      // the new content is already there. We don't revalidate to avoid cursor jumps.
+      mutate((currentData: any) => {
+        if (!currentData) return currentData;
+        return {
+          ...currentData,
+          data: { ...currentData.data, ...changes }
+        }
+      }, false)
     })
     .catch(() => {
       setAutosaveStatus('error')
     })
-  }, [noteId, setAutosaveStatus, setPendingChanges])
+  }, [noteId, setAutosaveStatus, setPendingChanges, mutate])
 
   const handleEditorChange = useCallback((content: string, contentText: string) => {
     if (!noteId) return;
@@ -92,6 +100,33 @@ export function useNote(noteId: string | null) {
     
   }, [noteId, saveChanges, setPendingChanges])
   
+  // Flush pending saves on unmount or window unload
+  useEffect(() => {
+    const flushSave = () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+        saveTimeoutRef.current = null
+        // If there are pending changes, flush them synchronously (best effort)
+        if (useEditorStore.getState().pendingChanges && note) {
+          const content = document.querySelector('.ProseMirror')?.innerHTML || note.content;
+          const contentText = document.querySelector('.ProseMirror')?.textContent || '';
+          
+          // Use sendBeacon for reliable delivery during page unload
+          navigator.sendBeacon(
+            `/api/notes/${noteId}`, 
+            JSON.stringify({ content, contentText })
+          );
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', flushSave);
+    return () => {
+      window.removeEventListener('beforeunload', flushSave);
+      flushSave(); // Also flush when component unmounts (e.g. switching notes)
+    };
+  }, [noteId, note]);
+
   const updateNote = useCallback((changes: any) => {
      if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
      saveChanges(changes);

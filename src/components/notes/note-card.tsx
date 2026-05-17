@@ -8,6 +8,8 @@ import { useState } from "react"
 import { useOptimisticAction } from "@/hooks/use-optimistic-action"
 import { mutate } from "swr"
 
+import { createPortal } from "react-dom"
+
 interface NoteCardProps {
   note: any
   isActive: boolean
@@ -155,7 +157,7 @@ export function NoteCard({ note, isActive, onClick, variants }: NoteCardProps) {
       </div>
 
       {/* Delete Confirmation Dialog inside the card */}
-      {showDeleteDialog && (
+      {showDeleteDialog && typeof document !== 'undefined' && createPortal(
         <div 
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
           onClick={(e) => { e.stopPropagation(); setShowDeleteDialog(false) }}
@@ -189,8 +191,10 @@ export function NoteCard({ note, isActive, onClick, variants }: NoteCardProps) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </motion.div>
   )
 }
+
