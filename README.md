@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Peblo Notes
+
+Peblo Notes is a premium, AI-powered workspace designed for focused writing and seamless productivity. Built with Next.js 15, Prisma, and Groq's fast Llama-3 models, it offers real-time editing, intelligent summarization, and task extraction.
+
+## Features
+
+- **Notes Workspace**: distraction-free editor with block-style formatting.
+- **AI Intelligence**: Summarize notes, extract action items, and generate titles instantly via Groq API.
+- **Productivity Insights**: Visualize your writing habits with data-driven dashboards.
+- **Optimized Performance**: Next.js App Router, SSR, and ISR.
+- **Premium UX**: Framer Motion transitions, responsive design, and glassmorphism UI.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router, React 19)
+- **Database**: PostgreSQL with Prisma ORM
+- **Auth**: NextAuth.js (Google OAuth & Credentials)
+- **AI**: Groq API (llama3-70b-8192)
+- **Styling**: Tailwind CSS & Framer Motion
+- **Editor**: Tiptap
+- **Testing**: Vitest & Playwright
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repository:**
+   ```bash
+   git clone <repo>
+   cd Peblo_Notes
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Set up environment variables:**
+   Copy `.env.example` to `.env` and fill in the required keys.
+   ```bash
+   cp .env.example .env
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. **Initialize the database:**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-To learn more about Next.js, take a look at the following resources:
+## Production Deployment (Vercel)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The app is optimized for serverless deployments on Vercel.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Create a new PostgreSQL database (e.g., Supabase) and update `DATABASE_URL` with connection pooling enabled (`?pgbouncer=true&connection_limit=10`).
+2. Push the code to a Git repository linked to Vercel.
+3. Configure the following Environment Variables in Vercel:
+   - `DATABASE_URL`
+   - `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
+   - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
+   - `GROQ_API_KEY`
+   - `RESEND_API_KEY`
+4. The `vercel.json` provides max-duration settings for AI routes to ensure timeouts don't occur.
 
-## Deploy on Vercel
+## Architecture
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `src/app`: Next.js App Router structure. Marketing, Auth, and App domains are segmented.
+- `src/components`: UI components organized by domain (`auth`, `notes`, `insights`, `ui`).
+- `src/lib`: Core utility functions, AI wrapper, and database configurations.
+- `src/hooks`: Custom React hooks for optimistic updates, shortcuts, and insights processing.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT License.

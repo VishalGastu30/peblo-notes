@@ -8,7 +8,7 @@ export const sendPasswordResetEmail = async (
 ) => {
   const resetLink = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
 
-  await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: 'Peblo Notes <onboarding@resend.dev>', // Use a verified domain in production
     to: email,
     subject: 'Reset your Peblo Notes password',
@@ -27,4 +27,10 @@ export const sendPasswordResetEmail = async (
       </div>
     `,
   });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 };

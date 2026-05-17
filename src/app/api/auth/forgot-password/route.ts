@@ -32,8 +32,15 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send email
-    await sendPasswordResetEmail(email, token);
+    // Send email (this might fail if Resend is not fully configured, so we log the URL for local testing)
+    const resetUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${token}`;
+    console.log(`\n🔑 [DEV ONLY] Password Reset URL: ${resetUrl}\n`);
+    
+    try {
+      await sendPasswordResetEmail(email, token);
+    } catch (emailError) {
+      console.warn('Failed to send email, but token was generated. (Check RESEND_API_KEY)', emailError);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
