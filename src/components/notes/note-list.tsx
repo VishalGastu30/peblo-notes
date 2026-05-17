@@ -25,7 +25,11 @@ const itemVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] } }
 };
 
-export function NoteList() {
+export interface NoteListProps {
+  initialNoteId?: string;
+}
+
+export function NoteList({ initialNoteId }: NoteListProps = {}) {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -61,6 +65,12 @@ export function NoteList() {
   const { tags } = useTags();
 
   const { activeNoteId, setActiveNote } = useEditorStore();
+
+  useEffect(() => {
+    if (initialNoteId && activeNoteId !== initialNoteId) {
+      setActiveNote(initialNoteId);
+    }
+  }, [initialNoteId, activeNoteId, setActiveNote]);
 
   return (
     <section className="bg-surface-container-lowest flex flex-col h-full overflow-hidden relative">
